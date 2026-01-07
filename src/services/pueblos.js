@@ -15,16 +15,31 @@ function normalizePueblo(doc) {
   return {
     id: doc.id,
     ...d,
+
     // defaults útiles
     nombre: d.nombre || "",
     estado: d.estado || "",
+    municipio: d.municipio || "",
     slug: d.slug || "",
     descripcionCorta: d.descripcionCorta || "",
+
+    // medios
+    imagenUrl: d.imagenUrl || "",
+    videoUrl: d.videoUrl || "",
+
+    // flags
     publicado: Boolean(d.publicado),
     destacado: Boolean(d.destacado),
+
+    // tags
     tags: Array.isArray(d.tags) ? d.tags.filter(Boolean) : [],
+
+    // timestamps (opcionales, por si los quieres usar sin validar)
+    createdAt: d.createdAt || null,
+    updatedAt: d.updatedAt || null,
   };
 }
+
 
 // ============================
 // #RTC_CO-1 — LISTA PUBLICADOS (CATÁLOGO)
