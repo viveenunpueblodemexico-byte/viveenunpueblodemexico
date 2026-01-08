@@ -9,40 +9,61 @@ import {
   limit,
 } from "firebase/firestore";
 
-// Normaliza para que nunca truene la UI
+// ============================
+// Normalizers
+// ============================
 function normalizePueblo(doc) {
   const d = doc.data() || {};
   return {
     id: doc.id,
     ...d,
 
-    // defaults útiles
     nombre: d.nombre || "",
     estado: d.estado || "",
     municipio: d.municipio || "",
     slug: d.slug || "",
     descripcionCorta: d.descripcionCorta || "",
 
-    // medios
     imagenUrl: d.imagenUrl || "",
     videoUrl: d.videoUrl || "",
 
-    // flags
     publicado: Boolean(d.publicado),
     destacado: Boolean(d.destacado),
 
-    // tags
     tags: Array.isArray(d.tags) ? d.tags.filter(Boolean) : [],
 
-    // timestamps (opcionales, por si los quieres usar sin validar)
     createdAt: d.createdAt || null,
     updatedAt: d.updatedAt || null,
   };
 }
 
+function normalizeOferta(doc) {
+  const d = doc.data() || {};
+  return {
+    id: doc.id,
+    ...d,
+    titulo: d.titulo || "",
+    descripcion: d.descripcion || "",
+    contactoEmail: d.contactoEmail || "",
+    activo: Boolean(d.activo),
+    createdAt: d.createdAt || null,
+  };
+}
+
+function normalizeImagen(doc) {
+  const d = doc.data() || {};
+  return {
+    id: doc.id,
+    ...d,
+    url: d.url || "",
+    alt: d.alt || "",
+    orden: Number.isFinite(d.orden) ? d.orden : 0,
+    createdAt: d.createdAt || null,
+  };
+}
 
 // ============================
-// #RTC_CO-1 — LISTA PUBLICADOS (CATÁLOGO)
+// #RTC_CO-1 — LISTA PUBLICADOS
 // ============================
 export async function getPueblosPublicados({ max = 50 } = {}) {
   const ref = collection(db, "pueblos");
@@ -62,17 +83,15 @@ export async function getPueblosPublicados({ max = 50 } = {}) {
 // ============================
 // #RTC_CO-2 — DETALLE POR SLUG
 // ============================
-// Para ruta: /pueblo/:slug
 export async function getPuebloBySlug(slug) {
   if (!slug) return null;
 
   const ref = collection(db, "pueblos");
 
-  // OJO: esto puede pedir índice compuesto (slug + publicado)
+  // ✅ Solo por slug (sin publicado)
   const q = query(
     ref,
     where("slug", "==", slug),
-    where("publicado", "==", true),
     limit(1)
   );
 
@@ -81,6 +100,7 @@ export async function getPuebloBySlug(slug) {
 
   return normalizePueblo(snap.docs[0]);
 }
+
 
 // ============================
 // #RTC_CO-3 — DESTACADOS (HOME)
@@ -98,4 +118,42 @@ export async function getPueblosDestacados({ max = 6 } = {}) {
 
   const snap = await getDocs(q);
   return snap.docs.map(normalizePueblo);
+}
+
+// ============================
+// #RTC_CO-4 — OFERTAS POR PUEBLO
+// ============================
+export async function getOfertasByPuebloId(puebloId, { max = 50 } = {}) {
+  if (!puebloId) return [];
+
+  const ref = collection(db, "pueblos", puebloId, "ofertas");
+
+  const q = query(
+    ref,
+    where("activo", "==", true),
+    orderBy("createdAt", "desc"),
+    limit(max)
+  );
+
+  const snap = await getDocs(q);
+  return snap.docs.map(normalizeOferta);
+}
+
+// ============================
+// #RTC_CO-5 — IMÁGENES POR PUEBLO (GALERÍA)
+// ============================
+export async function getImagenesByPuebloId(puebloId, { max = 30 } = {}) {
+  if (!puebloId) return [];
+
+  const ref = collection(db, "pueblos", puebloId, "imagenes");
+
+  const q = query(
+    ref,
+    orderBy("orden", "asc"),
+    orderBy("createdAt", "desc"),
+    limit(max)
+  );
+
+  const snap = await getDocs(q);
+  return snap.docs.map(normalizeImagen);
 }

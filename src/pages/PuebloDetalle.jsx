@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getPuebloBySlug } from "../services/pueblos";
+import { getPuebloBySlug, getOfertasByPuebloId } from "../services/pueblos";
 
 export default function PuebloDetalle() {
   const { slug } = useParams();
   const [pueblo, setPueblo] = useState(null);
+  const [ofertas, setOfertas] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -16,6 +17,8 @@ export default function PuebloDetalle() {
       try {
         const data = await getPuebloBySlug(slug);
         setPueblo(data);
+        const ofs = data?.id ? await getOfertasByPuebloId(data.id, { max: 50 }) : [];
+        setOfertas(ofs);
       } catch (err) {
         console.error(err);
         setError("No se pudo cargar este pueblo.");
@@ -117,19 +120,47 @@ export default function PuebloDetalle() {
 
     {/* Secciones placeholder (para lo que sigue) */}
     <div style={{ marginTop: 28, paddingTop: 16, borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-      <h2 style={{ margin: 0, fontSize: 18 }}>Oportunidades</h2>
-      <p style={{ opacity: 0.8, marginTop: 8 }}>
-        (Próximamente: ofertas laborales asociadas a este pueblo)
-      </p>
-    </div>
+  <h2 style={{ margin: 0, fontSize: 18 }}>Oportunidades</h2>
 
-    <div style={{ marginTop: 18, paddingTop: 16, borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-      <h2 style={{ margin: 0, fontSize: 18 }}>Galería</h2>
-      <p style={{ opacity: 0.8, marginTop: 8 }}>
-        (Próximamente: imágenes asociadas a este pueblo)
-      </p>
+  {ofertas.length === 0 ? (
+    <p style={{ opacity: 0.8, marginTop: 8 }}>
+      (Aún no hay ofertas activas para este pueblo)
+    </p>
+  ) : (
+    <div style={{ marginTop: 12, display: "grid", gap: 12 }}>
+      {ofertas.map((o) => (
+        <div
+          key={o.id}
+          style={{
+            padding: 14,
+            borderRadius: 14,
+            border: "1px solid rgba(255,255,255,0.10)",
+            background: "rgba(255,255,255,0.04)",
+          }}
+        >
+          <div style={{ fontWeight: 700, marginBottom: 6 }}>{o.titulo}</div>
+
+          {o.descripcion ? (
+            <div style={{ opacity: 0.9, lineHeight: 1.45 }}>{o.descripcion}</div>
+          ) : null}
+
+          {o.contactoEmail ? (
+            <div style={{ marginTop: 10, fontSize: 13, opacity: 0.85 }}>
+              Contacto:{" "}
+              <a
+                href={`mailto:${o.contactoEmail}`}
+                style={{ textDecoration: "underline" }}
+              >
+                {o.contactoEmail}
+              </a>
+            </div>
+          ) : null}
+        </div>
+      ))}
     </div>
-  </div>
+  )}
+</div>
+</div>
 );
 
 }
