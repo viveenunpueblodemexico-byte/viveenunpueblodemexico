@@ -2,6 +2,8 @@
 import { db } from "../firebase";
 import {
   collection,
+  doc,
+  getDoc,
   getDocs,
   query,
   where,
@@ -96,9 +98,16 @@ export async function getPuebloBySlug(slug) {
   );
 
   const snap = await getDocs(q);
-  if (snap.empty) return null;
+  if (!snap.empty) {
+    return normalizePueblo(snap.docs[0]);
+  }
 
-  return normalizePueblo(snap.docs[0]);
+  // 🔁 Fallback: si no existe ese slug, intentamos interpretarlo como docId
+  const docRef = doc(db, "pueblos", slug);
+  const docSnap = await getDoc(docRef);
+  if (!docSnap.exists()) return null;
+
+  return normalizePueblo(docSnap);
 }
 
 

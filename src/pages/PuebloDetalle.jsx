@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getPuebloBySlug, getOfertasByPuebloId } from "../services/pueblos";
+import { setPageSEO, buildAbsoluteUrl, clearManagedSEO } from "../utils/seo";
 
 export default function PuebloDetalle() {
   const { slug } = useParams();
@@ -19,6 +20,35 @@ export default function PuebloDetalle() {
         setPueblo(data);
         const ofs = data?.id ? await getOfertasByPuebloId(data.id, { max: 50 }) : [];
         setOfertas(ofs);
+
+
+        // SEO + OG dinámico por pueblo
+        if (data) {
+          const ubicacion = [data.municipio, data.estado].filter(Boolean).join(", ");
+          const title = `Vivir en ${data.nombre}${data.estado ? `, ${data.estado}` : ""} | Oportunidades y calidad de vida`;
+          const description =
+            data.descripcionCorta?.trim()
+              ? data.descripcionCorta.trim()
+              : `Descubre cómo es vivir en ${data.nombre}${ubicacion ? `, ${ubicacion}` : ""}. Trabajo, entorno, comunidad y oportunidades locales.`;
+
+          setPageSEO({
+            title,
+            description,
+            url: buildAbsoluteUrl(`/pueblo/${slug}`),
+            image: data.imagenUrl || "",
+            type: "article",
+          });
+        } else {
+          // No encontrado / null
+          setPageSEO({
+            title: "Pueblo no encontrado | Vive en un Pueblo de México",
+            description:
+              "Este pueblo no está disponible. Explora el catálogo de pueblos para descubrir nuevas oportunidades.",
+            url: buildAbsoluteUrl(`/pueblo/${slug}`),
+            type: "website",
+          });
+        }
+
       } catch (err) {
         console.error(err);
         setError("No se pudo cargar este pueblo.");
@@ -28,6 +58,11 @@ export default function PuebloDetalle() {
     }
 
     load();
+   return () => {
+      clearManagedSEO();
+    };
+
+    
   }, [slug]);
 
   if (loading) return <div style={{ padding: 24 }}>Cargando...</div>;

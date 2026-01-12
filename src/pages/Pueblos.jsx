@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getPueblosPublicados } from "../services/pueblos";
 import PuebloCard from "../components/PuebloCard";
+import { setPageSEO, buildAbsoluteUrl, clearManagedSEO } from "../utils/seo";
 
 export default function Pueblos() {
   const [pueblos, setPueblos] = useState([]);
@@ -9,6 +10,16 @@ export default function Pueblos() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // SEO + OG
+    setPageSEO({
+      title: "Pueblos para vivir en México | Catálogo de comunidades y oportunidades",
+      description:
+        "Explora pueblos de México con oportunidades de trabajo, vivienda y calidad de vida. Encuentra el lugar ideal para vivir.",
+      url: buildAbsoluteUrl("/pueblos"),
+      type: "website",
+    });
+
+
     async function loadPueblos() {
       setLoading(true);
       setError("");
@@ -25,6 +36,10 @@ export default function Pueblos() {
     }
 
     loadPueblos();
+
+   return () => {
+    clearManagedSEO();
+  };   
   }, []);
 
   return (
@@ -57,7 +72,7 @@ export default function Pueblos() {
         {pueblos.map((p) => (
           <Link
             key={p.id}
-            to={`/pueblo/${p.slug}`}
+            to={`/pueblo/${p.slug || p.id}`}
             style={{ textDecoration: "none", color: "inherit" }}
           >
             <PuebloCard pueblo={p} />
