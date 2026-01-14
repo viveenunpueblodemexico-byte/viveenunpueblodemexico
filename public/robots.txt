@@ -1,5 +1,3 @@
-//public/robots.txt
-
 User-agent: *
 Allow: /
 Sitemap: https://viveenunpueblodemexico.vercel.app/sitemap.xml

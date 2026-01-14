@@ -12,14 +12,15 @@ export default function Pueblos() {
   useEffect(() => {
     // SEO + OG
     setPageSEO({
-      title: "Pueblos para vivir en México | Catálogo de comunidades y oportunidades",
+      title: "Catálogo de pueblos para vivir en México | Vive en un Pueblo",
       description:
-        "Explora pueblos de México con oportunidades de trabajo, vivienda y calidad de vida. Encuentra el lugar ideal para vivir.",
+        "Explora pueblos publicados en el catálogo. Encuentra comunidades con calidad de vida y oportunidades locales.",
       url: buildAbsoluteUrl("/pueblos"),
       type: "website",
     });
 
 
+     
     async function loadPueblos() {
       setLoading(true);
       setError("");
@@ -29,7 +30,7 @@ export default function Pueblos() {
         setPueblos(data);
       } catch (err) {
         console.error(err);
-        setError(err.message || "Error al leer Firestore");
+        setError(err?.message || "Error al leer Firestore");
       } finally {
         setLoading(false);
       }
@@ -37,15 +38,21 @@ export default function Pueblos() {
 
     loadPueblos();
 
-   return () => {
-    clearManagedSEO();
-  };   
+    return () => {
+      clearManagedSEO();
+    };
   }, []);
 
   return (
-    <div style={{ padding: 24, fontFamily: "system-ui" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <h1 style={{ margin: 0 }}>Pueblos</h1>
+    <div style={{ padding: 24, fontFamily: "system-ui", maxWidth: 980, margin: "0 auto" }}>
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+        <div>
+          <h1 style={{ margin: 0 }}>Catálogo de pueblos</h1>
+          <p style={{ opacity: 0.85, marginTop: 8, lineHeight: 1.5 }}>
+            Pueblos publicados y curados. Abre una ficha para ver detalles, imágenes y oportunidades.
+          </p>
+        </div>
+
         <Link to="/" style={{ opacity: 0.85 }}>
           Volver
         </Link>

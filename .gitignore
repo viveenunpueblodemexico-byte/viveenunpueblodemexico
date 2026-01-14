@@ -25,4 +25,7 @@ dist-ssr
 # Env
 .env
 .env.*
+# Firebase service account (NUNCA subir)
+serviceAccountKey.json
+**/serviceAccountKey.json
 

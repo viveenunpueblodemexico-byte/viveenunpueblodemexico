@@ -1,0 +1,172 @@
+[
+  {
+    "puebloId": "coyuca-de-benitez-guerrero",
+    "pueblo": {
+      "nombre": "Coyuca de Benítez",
+      "slug": "coyuca-de-benitez",
+      "estado": "Guerrero",
+      "municipio": "Coyuca de Benítez",
+      "descripcionCorta": "Municipio de Guerrero cercano a la costa, con actividad local y comunidades que conectan zonas rurales con el corredor turístico regional.",
+      "imagenUrl": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80",
+      "videoUrl": "",
+      "tags": ["costa", "rural", "comunidades", "municipio"],
+      "publicado": true,
+      "destacado": false
+    },
+    "imagenes": [],
+    "ofertas": []
+  },
+  {
+    "puebloId": "florencio-villarreal-guerrero",
+    "pueblo": {
+      "nombre": "Florencio Villarreal",
+      "slug": "florencio-villarreal",
+      "estado": "Guerrero",
+      "municipio": "Florencio Villarreal",
+      "descripcionCorta": "Municipio del estado de Guerrero ubicado en la región Costa Chica, con vida local vinculada a actividades comunitarias y economía regional.",
+      "imagenUrl": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80",
+      "videoUrl": "",
+      "tags": ["costa chica", "local", "rural", "municipio"],
+      "publicado": true,
+      "destacado": false
+    },
+    "imagenes": [],
+    "ofertas": []
+  },
+  {
+    "puebloId": "igualapa-guerrero",
+    "pueblo": {
+      "nombre": "Igualapa",
+      "slug": "igualapa",
+      "estado": "Guerrero",
+      "municipio": "Igualapa",
+      "descripcionCorta": "Municipio de la región Costa Chica de Guerrero, con dinámicas rurales y servicios locales para comunidades cercanas.",
+      "imagenUrl": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80",
+      "videoUrl": "",
+      "tags": ["costa chica", "rural", "servicios", "municipio"],
+      "publicado": true,
+      "destacado": false
+    },
+    "imagenes": [],
+    "ofertas": []
+  },
+  {
+    "puebloId": "juan-r-escudero-guerrero",
+    "pueblo": {
+      "nombre": "Juan R. Escudero",
+      "slug": "juan-r-escudero",
+      "estado": "Guerrero",
+      "municipio": "Juan R. Escudero",
+      "descripcionCorta": "Municipio de Guerrero con comunidades locales y actividad económica regional, con enlaces viales hacia la zona centro del estado.",
+      "imagenUrl": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80",
+      "videoUrl": "",
+      "tags": ["comunidades", "regional", "rutas", "municipio"],
+      "publicado": true,
+      "destacado": false
+    },
+    "imagenes": [],
+    "ofertas": []
+  },
+  {
+    "puebloId": "juchitan-guerrero",
+    "pueblo": {
+      "nombre": "Juchitán",
+      "slug": "juchitan",
+      "estado": "Guerrero",
+      "municipio": "Juchitán",
+      "descripcionCorta": "Municipio de la Costa Chica de Guerrero, con identidad local y actividades comunitarias propias de una región principalmente rural.",
+      "imagenUrl": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80",
+      "videoUrl": "",
+      "tags": ["costa chica", "rural", "identidad", "municipio"],
+      "publicado": true,
+      "destacado": false
+    },
+    "imagenes": [],
+    "ofertas": []
+  },
+  {
+    "puebloId": "marquelia-guerrero",
+    "pueblo": {
+      "nombre": "Marquelia",
+      "slug": "marquelia",
+      "estado": "Guerrero",
+      "municipio": "Marquelia",
+      "descripcionCorta": "Municipio costero de Guerrero en la región Costa Chica, conocido por su ambiente local, cercanía al mar y servicios para comunidades vecinas.",
+      "imagenUrl": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80",
+      "videoUrl": "",
+      "tags": ["costa chica", "costa", "servicios", "local"],
+      "publicado": true,
+      "destacado": false
+    },
+    "imagenes": [],
+    "ofertas": []
+  },
+  {
+    "puebloId": "ometepec-guerrero",
+    "pueblo": {
+      "nombre": "Ometepec",
+      "slug": "ometepec",
+      "estado": "Guerrero",
+      "municipio": "Ometepec",
+      "descripcionCorta": "Municipio de la región Costa Chica de Guerrero con relevancia como punto de servicios y comercio para localidades cercanas.",
+      "imagenUrl": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80",
+      "videoUrl": "",
+      "tags": ["costa chica", "comercio", "servicios", "municipio"],
+      "publicado": true,
+      "destacado": false
+    },
+    "imagenes": [],
+    "ofertas": []
+  },
+  {
+    "puebloId": "san-luis-acatlan-guerrero",
+    "pueblo": {
+      "nombre": "San Luis Acatlán",
+      "slug": "san-luis-acatlan",
+      "estado": "Guerrero",
+      "municipio": "San Luis Acatlán",
+      "descripcionCorta": "Municipio de Guerrero en la región Costa Chica, con comunidades diversas y actividad local vinculada a servicios y economía regional.",
+      "imagenUrl": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80",
+      "videoUrl": "",
+      "tags": ["costa chica", "comunidades", "regional", "municipio"],
+      "publicado": true,
+      "destacado": false
+    },
+    "imagenes": [],
+    "ofertas": []
+  },
+  {
+    "puebloId": "san-marcos-guerrero",
+    "pueblo": {
+      "nombre": "San Marcos",
+      "slug": "san-marcos",
+      "estado": "Guerrero",
+      "municipio": "San Marcos",
+      "descripcionCorta": "Municipio de Guerrero con vida comunitaria y actividad económica regional, cercano a corredores carreteros hacia la capital del estado.",
+      "imagenUrl": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80",
+      "videoUrl": "",
+      "tags": ["comunidades", "regional", "rutas", "municipio"],
+      "publicado": true,
+      "destacado": false
+    },
+    "imagenes": [],
+    "ofertas": []
+  },
+  {
+    "puebloId": "tecoanapa-guerrero",
+    "pueblo": {
+      "nombre": "Tecoanapa",
+      "slug": "tecoanapa",
+      "estado": "Guerrero",
+      "municipio": "Tecoanapa",
+      "descripcionCorta": "Municipio de Guerrero con comunidades rurales y dinámica local, ubicado en una zona de transición entre áreas costeras e interiores.",
+      "imagenUrl": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80",
+      "videoUrl": "",
+      "tags": ["rural", "transicion", "comunidades", "municipio"],
+      "publicado": true,
+      "destacado": false
+    },
+    "imagenes": [],
+    "ofertas": []
+  }
+]
