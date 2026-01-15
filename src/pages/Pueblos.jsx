@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { getPueblosPublicados } from "../services/pueblos";
 import PuebloCard from "../components/PuebloCard";
 import { setPageSEO, buildAbsoluteUrl, clearManagedSEO } from "../utils/seo";
+import Navbar from "../components/Navbar";
 
 export default function Pueblos() {
   const [pueblos, setPueblos] = useState([]);
@@ -44,9 +45,11 @@ export default function Pueblos() {
   }, []);
 
   return (
+    
     <div style={{ padding: 24, fontFamily: "system-ui", maxWidth: 980, margin: "0 auto" }}>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
         <div>
+          <Navbar />
           <h1 style={{ margin: 0 }}>Catálogo de pueblos</h1>
           <p style={{ opacity: 0.85, marginTop: 8, lineHeight: 1.5 }}>
             Pueblos publicados y curados. Abre una ficha para ver detalles, imágenes y oportunidades.

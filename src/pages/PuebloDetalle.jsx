@@ -174,6 +174,78 @@ export default function PuebloDetalle() {
         </div>
       )}
 
+      {/* ACCESOS RÁPIDOS */}
+<div
+  style={{
+    marginTop: 22,
+    paddingTop: 16,
+    borderTop: "1px solid rgba(255,255,255,0.08)",
+  }}
+>
+  <h2 style={{ margin: 0, fontSize: 18 }}>Explorar en este pueblo</h2>
+
+  <div
+    style={{
+      marginTop: 12,
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+      gap: 12,
+    }}
+  >
+    <Link
+      to="/trabajo"
+      style={{
+        padding: 14,
+        borderRadius: 14,
+        border: "1px solid rgba(255,255,255,0.10)",
+        background: "rgba(255,255,255,0.04)",
+        textDecoration: "none",
+        color: "inherit",
+      }}
+    >
+      <div style={{ fontWeight: 700, marginBottom: 6 }}>Trabajo</div>
+      <div style={{ opacity: 0.85, lineHeight: 1.45 }}>
+        Vacantes y proyectos (próximamente)
+      </div>
+    </Link>
+
+    <Link
+      to="/vivienda"
+      style={{
+        padding: 14,
+        borderRadius: 14,
+        border: "1px solid rgba(255,255,255,0.10)",
+        background: "rgba(255,255,255,0.04)",
+        textDecoration: "none",
+        color: "inherit",
+      }}
+    >
+      <div style={{ fontWeight: 700, marginBottom: 6 }}>Vivienda</div>
+      <div style={{ opacity: 0.85, lineHeight: 1.45 }}>
+        Rentas, casas y terrenos (próximamente)
+      </div>
+    </Link>
+
+    <Link
+      to="/traspasos"
+      style={{
+        padding: 14,
+        borderRadius: 14,
+        border: "1px solid rgba(255,255,255,0.10)",
+        background: "rgba(255,255,255,0.04)",
+        textDecoration: "none",
+        color: "inherit",
+      }}
+    >
+      <div style={{ fontWeight: 700, marginBottom: 6 }}>Traspasos</div>
+      <div style={{ opacity: 0.85, lineHeight: 1.45 }}>
+        Negocios y oportunidades (próximamente)
+      </div>
+    </Link>
+  </div>
+</div>
+
+
       {/* VIDEO */}
       {pueblo.videoUrl ? (
         <div style={{ marginTop: 18 }}>
