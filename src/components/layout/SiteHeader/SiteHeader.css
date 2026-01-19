@@ -1,0 +1,133 @@
+.siteHeader {
+  width: 100%;
+}
+
+/* Estructura base */
+.siteHeader__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+}
+
+/* Brand */
+.siteHeader__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.siteHeader__mark {
+  display: inline-flex;
+}
+
+.siteHeader__name {
+  font-weight: 700;
+}
+
+/* Desktop nav */
+.siteHeader__nav {
+  display: flex;
+  gap: 16px;
+}
+
+.siteHeader__link {
+  text-decoration: none;
+  color: inherit;
+  opacity: 0.9;
+}
+
+.siteHeader__link.is-active {
+  opacity: 1;
+  font-weight: 700;
+}
+
+/* CTAs */
+.siteHeader__cta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.siteHeader__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.15);
+  color: inherit;
+}
+
+.siteHeader__btn--primary {
+  border-color: transparent;
+}
+
+.siteHeader__btn--ghost {
+  background: transparent;
+}
+
+/* Hamburger */
+.siteHeader__hamburger {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.15);
+  background: transparent;
+}
+
+.siteHeader__hamburger span {
+  display: block;
+  height: 2px;
+  margin: 6px 10px;
+  background: currentColor;
+}
+
+/* Mobile panel */
+.siteHeader__mobile {
+  border-top: 1px solid rgba(0,0,0,0.08);
+  padding: 12px 0;
+}
+
+.siteHeader__mobileLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.siteHeader__mobileLink {
+  text-decoration: none;
+  color: inherit;
+  padding: 10px 6px;
+  border-radius: 10px;
+}
+
+.siteHeader__mobileLink.is-active {
+  font-weight: 700;
+}
+
+.siteHeader__mobileCta {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .siteHeader__nav,
+  .siteHeader__cta {
+    display: none;
+  }
+
+  .siteHeader__hamburger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

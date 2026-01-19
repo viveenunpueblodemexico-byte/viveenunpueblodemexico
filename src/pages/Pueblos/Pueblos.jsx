@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getPueblosPublicados } from "../services/pueblos";
-import PuebloCard from "../components/PuebloCard";
-import { setPageSEO, buildAbsoluteUrl, clearManagedSEO } from "../utils/seo";
-import Navbar from "../components/Navbar";
+import { getPueblosPublicados } from "../../services/pueblos";
+import PuebloCard from "../../components/PuebloCard";
+import { setPageSEO, buildAbsoluteUrl, clearManagedSEO } from "../../utils/seo";
+import Navbar from "../../components/Navbar";
 
 export default function Pueblos() {
   const [pueblos, setPueblos] = useState([]);

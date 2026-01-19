@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getPuebloBySlug } from "../services/pueblos";
+import { getPuebloBySlug } from "../../services/pueblos";
 
 export default function PuebloDetailPage() {
   const { slug } = useParams();

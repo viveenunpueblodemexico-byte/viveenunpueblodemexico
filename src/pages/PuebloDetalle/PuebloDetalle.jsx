@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getPuebloBySlug, getOfertasByPuebloId } from "../services/pueblos";
-import { setPageSEO, buildAbsoluteUrl, clearManagedSEO } from "../utils/seo";
+import { getPuebloBySlug, getOfertasByPuebloId } from "../../services/pueblos";
+import { setPageSEO, buildAbsoluteUrl, clearManagedSEO } from "../../utils/seo";
 
 export default function PuebloDetalle() {
   const { slug } = useParams();
