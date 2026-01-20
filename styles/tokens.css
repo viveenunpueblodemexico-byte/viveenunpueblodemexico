@@ -1,0 +1,20 @@
+:root{
+  /* Paleta 1 — México natural */
+  --bg: #F5F1EB;        /* Arena claro */
+  --bg-2: #B8BEAE;      /* Verde oliva suave */
+  --text: #2F4F3E;      /* Verde oscuro */
+  --accent: #C46A3A;    /* Terracota */
+  --muted: #8C8C8C;     /* Gris piedra */
+
+  /* UI */
+  --surface: rgba(255,255,255,0.72);      /* tarjetas */
+  --surface-2: rgba(184,190,174,0.35);    /* panel */
+  --border: rgba(47,79,62,0.14);
+  --border-strong: rgba(47,79,62,0.22);
+
+  --radius: 16px;
+  --radius-sm: 12px;
+
+  --shadow: 0 12px 30px rgba(0,0,0,0.10);
+  --shadow-soft: 0 10px 24px rgba(0,0,0,0.08);
+}

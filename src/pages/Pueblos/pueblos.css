@@ -1,0 +1,59 @@
+.pueblos {
+  padding-block: 28px 56px;
+}
+
+.pueblos__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.pueblos__title {
+  margin: 0;
+  font-size: clamp(28px, 3.2vw, 40px);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.pueblos__subtitle {
+  margin: 10px 0 0;
+  max-width: 70ch;
+  opacity: 0.85;
+  line-height: 1.55;
+}
+
+.pueblos__back {
+  opacity: 0.85;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+}
+
+.pueblos__back:hover {
+  opacity: 1;
+  border-bottom-color: rgba(0, 0, 0, 0.25);
+}
+
+.pueblos__status {
+  margin-top: 12px;
+}
+
+.pueblos__status--error {
+  color: crimson;
+}
+
+.pueblos__grid {
+  margin-top: 16px;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.pueblos__cardLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}

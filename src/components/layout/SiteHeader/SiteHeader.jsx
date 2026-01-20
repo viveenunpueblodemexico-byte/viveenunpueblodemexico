@@ -1,67 +1,56 @@
+import { NavLink } from "react-router-dom";
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
 import Container from "../Container/Container";
-import "./siteHeader.css";
-
-const navItems = [
-  { to: "/pueblos", label: "Pueblos" },
-  { to: "/trabajo", label: "Trabajo" },
-  { to: "/vivienda", label: "Vivienda" },
-  { to: "/traspasos", label: "Traspasos" },
-  { to: "/acerca", label: "Acerca de" },
-];
+import "./SiteHeader.css";
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
 
-  const close = () => setOpen(false);
-
   return (
-    <header className="siteHeader" role="banner">
+    <header className="siteHeader">
       <Container className="siteHeader__inner">
         {/* Brand */}
-        <Link className="siteHeader__brand" to="/" onClick={close}>
-          <span className="siteHeader__mark" aria-hidden="true">
-            🌿
-          </span>
+        <NavLink to="/" className="siteHeader__brand" onClick={() => setOpen(false)}>
+          <span className="siteHeader__mark" aria-hidden="true">🌿</span>
           <span className="siteHeader__name">Vive en un Pueblo</span>
-        </Link>
+        </NavLink>
 
         {/* Desktop nav */}
         <nav className="siteHeader__nav" aria-label="Navegación principal">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                `siteHeader__link ${isActive ? "is-active" : ""}`
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
+          <NavLink to="/pueblos" className={({ isActive }) => `siteHeader__link ${isActive ? "is-active" : ""}`}>
+            Pueblos
+          </NavLink>
+          <NavLink to="/trabajo" className={({ isActive }) => `siteHeader__link ${isActive ? "is-active" : ""}`}>
+            Trabajo
+          </NavLink>
+          <NavLink to="/vivienda" className={({ isActive }) => `siteHeader__link ${isActive ? "is-active" : ""}`}>
+            Vivienda
+          </NavLink>
+          <NavLink to="/traspasos" className={({ isActive }) => `siteHeader__link ${isActive ? "is-active" : ""}`}>
+            Traspasos
+          </NavLink>
+          <NavLink to="/acerca" className={({ isActive }) => `siteHeader__link ${isActive ? "is-active" : ""}`}>
+            Acerca de
+          </NavLink>
         </nav>
 
-        {/* CTAs */}
+        {/* CTAs desktop */}
         <div className="siteHeader__cta">
-          <Link className="siteHeader__btn siteHeader__btn--ghost" to="/pueblos">
+          <NavLink to="/pueblos" className="siteHeader__btn siteHeader__btn--ghost">
             Explorar
-          </Link>
-
-          {/* Esto lo conectamos luego a tu sección Newsletter */}
-          <a className="siteHeader__btn siteHeader__btn--primary" href="#newsletter">
+          </NavLink>
+          <a href="#newsletter" className="siteHeader__btn siteHeader__btn--primary">
             Recibir novedades
           </a>
         </div>
 
-        {/* Mobile toggle */}
+        {/* Hamburger */}
         <button
           type="button"
           className="siteHeader__hamburger"
           aria-label={open ? "Cerrar menú" : "Abrir menú"}
           aria-expanded={open}
-          aria-controls="siteHeaderMobile"
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => setOpen(v => !v)}
         >
           <span />
           <span />
@@ -70,45 +59,38 @@ export default function SiteHeader() {
       </Container>
 
       {/* Mobile panel */}
-      <div
-        id="siteHeaderMobile"
-        className={`siteHeader__mobile ${open ? "is-open" : ""}`}
-        hidden={!open}
-      >
-        <Container className="siteHeader__mobileInner">
-          <div className="siteHeader__mobileLinks">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                onClick={close}
-                className={({ isActive }) =>
-                  `siteHeader__mobileLink ${isActive ? "is-active" : ""}`
-                }
-              >
-                {item.label}
+      {open && (
+        <div className="siteHeader__mobile">
+          <Container>
+            <div className="siteHeader__mobileLinks">
+              <NavLink to="/pueblos" className={({ isActive }) => `siteHeader__mobileLink ${isActive ? "is-active" : ""}`} onClick={() => setOpen(false)}>
+                Pueblos
               </NavLink>
-            ))}
-          </div>
+              <NavLink to="/trabajo" className={({ isActive }) => `siteHeader__mobileLink ${isActive ? "is-active" : ""}`} onClick={() => setOpen(false)}>
+                Trabajo
+              </NavLink>
+              <NavLink to="/vivienda" className={({ isActive }) => `siteHeader__mobileLink ${isActive ? "is-active" : ""}`} onClick={() => setOpen(false)}>
+                Vivienda
+              </NavLink>
+              <NavLink to="/traspasos" className={({ isActive }) => `siteHeader__mobileLink ${isActive ? "is-active" : ""}`} onClick={() => setOpen(false)}>
+                Traspasos
+              </NavLink>
+              <NavLink to="/acerca" className={({ isActive }) => `siteHeader__mobileLink ${isActive ? "is-active" : ""}`} onClick={() => setOpen(false)}>
+                Acerca de
+              </NavLink>
+            </div>
 
-          <div className="siteHeader__mobileCta">
-            <Link
-              className="siteHeader__btn siteHeader__btn--ghost"
-              to="/pueblos"
-              onClick={close}
-            >
-              Explorar
-            </Link>
-            <a
-              className="siteHeader__btn siteHeader__btn--primary"
-              href="#newsletter"
-              onClick={close}
-            >
-              Recibir novedades
-            </a>
-          </div>
-        </Container>
-      </div>
+            <div className="siteHeader__mobileCta">
+              <NavLink to="/pueblos" className="siteHeader__btn siteHeader__btn--ghost" onClick={() => setOpen(false)}>
+                Explorar
+              </NavLink>
+              <a href="#newsletter" className="siteHeader__btn siteHeader__btn--primary" onClick={() => setOpen(false)}>
+                Recibir novedades
+              </a>
+            </div>
+          </Container>
+        </div>
+      )}
     </header>
   );
 }

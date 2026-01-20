@@ -1,0 +1,70 @@
+.puebloCard {
+  height: 220px;              /* 👈 ajusta si quieres más/menos */
+  display: flex;
+  flex-direction: column;
+
+  border: 1px solid rgba(20, 30, 25, 0.10);
+  border-radius: 14px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.40);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.06);
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.puebloCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px rgba(0,0,0,0.10);
+}
+
+.puebloCard__title {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+
+  /* opcional: si un nombre es larguísimo */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.puebloCard__star {
+  margin-left: 4px;
+}
+
+.puebloCard__state {
+  margin-top: 4px;
+  opacity: 0.8;
+}
+
+.puebloCard__desc {
+  margin: 10px 0 0;
+  opacity: 0.9;
+  line-height: 1.5;
+
+/* 👇 limitar a 3 líneas para que todas sean uniformes */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.puebloCard__tags {
+  margin-top: auto;   /* 👈 empuja tags al fondo SIEMPRE */
+  padding-top: 10px;
+  font-size: 12px;
+  opacity: 0.75;
+
+  /* 👇 una sola línea con ellipsis */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pueblos__cardLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  height: 100%;
+}

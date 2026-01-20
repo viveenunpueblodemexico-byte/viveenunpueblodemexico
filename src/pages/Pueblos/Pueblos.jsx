@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import { getPueblosPublicados } from "../../services/pueblos";
 import PuebloCard from "../../components/PuebloCard";
 import { setPageSEO, buildAbsoluteUrl, clearManagedSEO } from "../../utils/seo";
-import Navbar from "../../components/Navbar";
+import Container from "../../components/layout/Container/Container";
+
+import "./pueblos.css";
 
 export default function Pueblos() {
   const [pueblos, setPueblos] = useState([]);
@@ -11,7 +13,6 @@ export default function Pueblos() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // SEO + OG
     setPageSEO({
       title: "Catálogo de pueblos para vivir en México | Vive en un Pueblo",
       description:
@@ -20,12 +21,9 @@ export default function Pueblos() {
       type: "website",
     });
 
-
-     
     async function loadPueblos() {
       setLoading(true);
       setError("");
-
       try {
         const data = await getPueblosPublicados({ max: 100 });
         setPueblos(data);
@@ -45,50 +43,41 @@ export default function Pueblos() {
   }, []);
 
   return (
-    
-    <div style={{ padding: 24, fontFamily: "system-ui", maxWidth: 980, margin: "0 auto" }}>
-      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-        <div>
-          <Navbar />
-          <h1 style={{ margin: 0 }}>Catálogo de pueblos</h1>
-          <p style={{ opacity: 0.85, marginTop: 8, lineHeight: 1.5 }}>
-            Pueblos publicados y curados. Abre una ficha para ver detalles, imágenes y oportunidades.
-          </p>
-        </div>
+    <main className="pueblos">
+      <Container>
+        <header className="pueblos__header">
+          <div className="pueblos__titleBlock">
+            <h1 className="pueblos__title">Catálogo de pueblos</h1>
+            <p className="pueblos__subtitle">
+              Pueblos publicados y curados. Abre una ficha para ver detalles,
+              imágenes y oportunidades.
+            </p>
+          </div>
 
-        <Link to="/" style={{ opacity: 0.85 }}>
-          Volver
-        </Link>
-      </div>
-
-      {error && (
-        <div style={{ color: "red", marginTop: 12 }}>Error: {error}</div>
-      )}
-
-      {loading && !error && <p style={{ marginTop: 12 }}>Cargando...</p>}
-
-      {!loading && !error && pueblos.length === 0 && (
-        <p style={{ marginTop: 12 }}>Aún no hay pueblos publicados.</p>
-      )}
-
-      <div
-        style={{
-          marginTop: 14,
-          display: "grid",
-          gap: 14,
-          gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-        }}
-      >
-        {pueblos.map((p) => (
-          <Link
-            key={p.id}
-            to={`/pueblo/${p.slug || p.id}`}
-            style={{ textDecoration: "none", color: "inherit" }}
-          >
-            <PuebloCard pueblo={p} />
+          <Link className="pueblos__back" to="/">
+            Volver
           </Link>
-        ))}
-      </div>
-    </div>
+        </header>
+
+        {error && <p className="pueblos__status pueblos__status--error">Error: {error}</p>}
+        {loading && !error && <p className="pueblos__status">Cargando...</p>}
+
+        {!loading && !error && pueblos.length === 0 && (
+          <p className="pueblos__status">Aún no hay pueblos publicados.</p>
+        )}
+
+        <section className="pueblos__grid" aria-label="Listado de pueblos">
+          {pueblos.map((p) => (
+            <Link
+              key={p.id}
+              to={`/pueblo/${p.slug || p.id}`}
+              className="pueblos__cardLink"
+            >
+              <PuebloCard pueblo={p} />
+            </Link>
+          ))}
+        </section>
+      </Container>
+    </main>
   );
 }
