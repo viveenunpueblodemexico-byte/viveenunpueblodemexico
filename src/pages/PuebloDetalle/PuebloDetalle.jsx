@@ -1,10 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { getPuebloBySlug, getOfertasByPuebloId } from "../../services/pueblos";
 import { setPageSEO, buildAbsoluteUrl, clearManagedSEO } from "../../utils/seo";
 
 export default function PuebloDetalle() {
   const { slug } = useParams();
+  const [searchParams] = useSearchParams();
+
+  const backParam = searchParams.get("back"); // ej: "/estado/san-luis-potosi"
+  const backHref = backParam ? decodeURIComponent(backParam) : "/pueblos";
+
+  const isFromEstado = backHref.startsWith("/estado/");
+  const backLabel = isFromEstado ? "← Volver al estado" : "← Volver al catálogo";
+
   const [pueblo, setPueblo] = useState(null);
   const [ofertas, setOfertas] = useState([]);
   const [error, setError] = useState("");
@@ -116,9 +124,16 @@ export default function PuebloDetalle() {
         margin: "0 auto",
       }}
     >
-      <Link to="/pueblos" style={{ opacity: 0.85 }}>
-        ← Volver al catálogo
+      <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+      <Link to={backHref} style={{ opacity: 0.9 }}>
+        {backLabel}
       </Link>
+
+      <Link to="/pueblos" style={{ opacity: 0.7, fontSize: 13 }}>
+        Ver todos los pueblos
+      </Link>
+    </div>
+
 
       <h1 style={{ marginTop: 12, marginBottom: 6 }}>
         {pueblo.nombre} {pueblo.destacado ? "⭐" : ""}

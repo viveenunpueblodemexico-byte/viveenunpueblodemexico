@@ -17,7 +17,10 @@ export default function SiteHeader() {
 
         {/* Desktop nav */}
         <nav className="siteHeader__nav" aria-label="Navegación principal">
-          <NavLink to="/pueblos" className={({ isActive }) => `siteHeader__link ${isActive ? "is-active" : ""}`}>
+          <NavLink to="/estados" className={({ isActive }) => `siteHeader__link ${isActive ? "is-active" : ""}`}>
+            Estados
+          </NavLink>
+         <NavLink to="/pueblos" className={({ isActive }) => `siteHeader__link ${isActive ? "is-active" : ""}`}>
             Pueblos
           </NavLink>
           <NavLink to="/trabajo" className={({ isActive }) => `siteHeader__link ${isActive ? "is-active" : ""}`}>
@@ -36,9 +39,10 @@ export default function SiteHeader() {
 
         {/* CTAs desktop */}
         <div className="siteHeader__cta">
-          <NavLink to="/pueblos" className="siteHeader__btn siteHeader__btn--ghost">
+          <NavLink to="/estados" className="siteHeader__btn siteHeader__btn--ghost">
             Explorar
           </NavLink>
+
           <a href="#newsletter" className="siteHeader__btn siteHeader__btn--primary">
             Recibir novedades
           </a>

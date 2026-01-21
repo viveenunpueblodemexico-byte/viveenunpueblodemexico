@@ -40,3 +40,12 @@
 .read-the-docs {
   color: #888;
 }
+.appShell{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.appMain{
+  flex: 1;
+}

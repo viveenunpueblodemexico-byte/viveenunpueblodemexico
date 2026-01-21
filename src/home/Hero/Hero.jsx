@@ -57,7 +57,7 @@ export default function Hero() {
           </p>
 
           <div className="hero__cta">
-            <Link className="btn btn--primary" to="/pueblos">
+            <Link className="btn btn--primary" to="/estados">
               Ver catálogo
             </Link>
 

@@ -4,6 +4,8 @@ import SiteHeader from "../components/layout/SiteHeader/SiteHeader";
 import SiteFooter from "../components/layout/SiteFooter/SiteFooter";
 
 import Home from "../pages/Home/Home";
+import Estados from "../pages/Estados/Estados";
+import Estado from "../pages/Estado/Estado";
 import Pueblos from "../pages/Pueblos/Pueblos";
 import PuebloDetalle from "../pages/PuebloDetalle/PuebloDetalle";
 import Trabajo from "../pages/Trabajo/Trabajo";
@@ -13,10 +15,15 @@ import Traspasos from "../pages/Traspasos/Traspasos";
 export default function App() {
   return (
     <BrowserRouter>
+    <div className="appShell">
       <SiteHeader />
 
+       <main className="appMain">
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/estados" element={<Estados />} />
+        <Route path="/estado/:estadoSlug" element={<Estado />} />
+
         <Route path="/pueblos" element={<Pueblos />} />
         <Route path="/pueblo/:slug" element={<PuebloDetalle />} />
 
@@ -32,9 +39,11 @@ export default function App() {
             </div>
           }
         />
-      </Routes>
+      </Routes>     
+       </main>
 
-      <SiteFooter />
+        <SiteFooter />
+      </div>
     </BrowserRouter>
   );
 }
