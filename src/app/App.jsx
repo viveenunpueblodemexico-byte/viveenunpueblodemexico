@@ -9,6 +9,7 @@ import Estado from "../pages/Estado/Estado";
 import Pueblos from "../pages/Pueblos/Pueblos";
 import PuebloDetalle from "../pages/PuebloDetalle/PuebloDetalle";
 import Trabajo from "../pages/Trabajo/Trabajo";
+import TrabajoPublicar from "../pages/Trabajo/TrabajoPublicar";
 import Vivienda from "../pages/Vivienda/Vivienda";
 import Traspasos from "../pages/Traspasos/Traspasos";
 
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/pueblo/:slug" element={<PuebloDetalle />} />
 
         <Route path="/trabajo" element={<Trabajo />} />
+        <Route path="/trabajo/publicar" element={<TrabajoPublicar />} />
         <Route path="/vivienda" element={<Vivienda />} />
         <Route path="/traspasos" element={<Traspasos />} />
 

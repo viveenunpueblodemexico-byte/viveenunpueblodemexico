@@ -1,0 +1,52 @@
+/* src/pages/Trabajo/trabajo.css */
+
+.trabajoPage {
+  padding: 48px 0 72px;
+}
+
+.trabajoTop {
+  margin-bottom: 24px;
+}
+
+.trabajoActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+/* empuja el CTA “Publicar oferta” a la derecha en desktop */
+.trabajoActions .btn.btn--primary {
+  margin-left: auto;
+}
+
+.trabajoHeader {
+  margin-top: 12px;
+  text-align: center; /* 👈 centra el título y el párrafo */
+}
+
+.trabajoTitle {
+  margin: 0 0 10px;
+  font-size: clamp(34px, 4.2vw, 54px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.trabajoLead {
+  margin: 0;
+  max-width: 72ch;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* responsive: CTA ya no se va “hasta la derecha” si no hay espacio */
+@media (max-width: 720px) {
+  .trabajoActions .btn.btn--primary {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+}
