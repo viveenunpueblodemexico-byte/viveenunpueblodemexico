@@ -8,6 +8,11 @@ import Estados from "../pages/Estados/Estados";
 import Estado from "../pages/Estado/Estado";
 import Pueblos from "../pages/Pueblos/Pueblos";
 import PuebloDetalle from "../pages/PuebloDetalle/PuebloDetalle";
+
+import AdminLogin from "../pages/Admin/AdminLogin";
+import AdminOfertas from "../pages/Admin/AdminOfertas";
+import RequireAdmin from "../components/auth/RequireAdmin";
+
 import Trabajo from "../pages/Trabajo/Trabajo";
 import TrabajoPublicar from "../pages/Trabajo/TrabajoPublicar";
 import Vivienda from "../pages/Vivienda/Vivienda";
@@ -32,6 +37,17 @@ export default function App() {
         <Route path="/trabajo/publicar" element={<TrabajoPublicar />} />
         <Route path="/vivienda" element={<Vivienda />} />
         <Route path="/traspasos" element={<Traspasos />} />
+
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route
+          path="/admin/ofertas"
+          element={
+            <RequireAdmin>
+              <AdminOfertas />
+            </RequireAdmin>
+          }
+        />
+
 
         <Route
           path="*"

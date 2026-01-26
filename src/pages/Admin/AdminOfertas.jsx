@@ -1,0 +1,163 @@
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import Container from "../../components/layout/Container/Container";
+import { auth } from "../../firebase";
+import { aprobarOferta, getOfertasPendientes, rechazarOferta } from "../../services/ofertas";
+
+export default function AdminOfertas() {
+  const [tipo, setTipo] = useState("trabajo");
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [busyId, setBusyId] = useState("");
+  const [error, setError] = useState("");
+
+  const count = items.length;
+
+  async function load() {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await getOfertasPendientes({ tipo, max: 200 });
+      setItems(data);
+    } catch (e) {
+      setError(e?.message || "No se pudieron cargar las ofertas.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tipo]);
+
+  async function onApprove(it) {
+    setBusyId(it.id);
+    try {
+      await aprobarOferta({ puebloId: it.puebloId, ofertaId: it.id });
+      setItems((prev) => prev.filter((x) => x.id !== it.id));
+    } catch (e) {
+      alert(e?.message || "No se pudo aprobar.");
+    } finally {
+      setBusyId("");
+    }
+  }
+
+  async function onReject(it) {
+    setBusyId(it.id);
+    try {
+      await rechazarOferta({ puebloId: it.puebloId, ofertaId: it.id });
+      setItems((prev) => prev.filter((x) => x.id !== it.id));
+    } catch (e) {
+      alert(e?.message || "No se pudo rechazar.");
+    } finally {
+      setBusyId("");
+    }
+  }
+
+  const empty = useMemo(() => !loading && count === 0, [loading, count]);
+
+  return (
+    <main style={{ padding: "24px 0" }}>
+      <Container>
+        <div style={{ display: "flex", gap: 10, justifyContent: "space-between", alignItems: "center", flexWrap: "wrap" }}>
+          <div>
+            <h1 style={{ marginBottom: 4 }}>Moderación de ofertas</h1>
+            <p>Pendientes: <b>{loading ? "…" : count}</b></p>
+          </div>
+
+          <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+            <select
+              className="control"
+              value={tipo}
+              onChange={(e) => setTipo(e.target.value)}
+              disabled={loading}
+            >
+              <option value="trabajo">Trabajo</option>
+              <option value="vivienda">Vivienda</option>
+              <option value="traspasos">Traspasos</option>
+            </select>
+
+            <button className="btn" onClick={load} disabled={loading}>
+              Recargar
+            </button>
+
+            <Link className="btn" to="/">
+              Ir al sitio
+            </Link>
+
+            <button className="btn" onClick={() => signOut(auth)}>
+              Cerrar sesión
+            </button>
+          </div>
+        </div>
+
+        {error ? <div style={{ marginTop: 12, color: "crimson" }}>{error}</div> : null}
+
+        <div style={{ marginTop: 16, display: "grid", gap: 12 }}>
+          {loading ? <div>Cargando…</div> : null}
+          {empty ? <div>No hay ofertas pendientes 🎉</div> : null}
+
+          {items.map((it) => (
+            <div
+              key={it.id}
+              style={{
+                border: "1px solid var(--border)",
+                borderRadius: 14,
+                padding: 14,
+                textAlign: "left",
+                background: "color-mix(in srgb, var(--bg) 92%, #fff 8%)",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+                <div>
+                  <div style={{ fontWeight: 800 }}>{it.titulo}</div>
+                  <div style={{ opacity: 0.8, fontSize: 14 }}>
+                    {it.puebloNombre || "—"} · {it.estado || "—"} · <b>{it.tipo}</b> · <span>status: {it.status}</span>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                  {it.puebloSlug ? (
+                    <Link className="btn" to={`/pueblo/${it.puebloSlug}?back=${encodeURIComponent("/admin/ofertas")}`}>
+                      Ver pueblo
+                    </Link>
+                  ) : null}
+
+                  <button
+                    className="btn btn--primary"
+                    onClick={() => onApprove(it)}
+                    disabled={busyId === it.id}
+                  >
+                    {busyId === it.id ? "…" : "Aprobar"}
+                  </button>
+
+                  <button
+                    className="btn"
+                    onClick={() => onReject(it)}
+                    disabled={busyId === it.id}
+                  >
+                    {busyId === it.id ? "…" : "Rechazar"}
+                  </button>
+                </div>
+              </div>
+
+              {it.descripcion ? (
+                <p style={{ marginTop: 10, whiteSpace: "pre-wrap" }}>
+                  {it.descripcion}
+                </p>
+              ) : null}
+
+              {it.contactoEmail ? (
+                <p style={{ marginTop: 8, fontSize: 14 }}>
+                  Contacto: <b>{it.contactoEmail}</b>
+                </p>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      </Container>
+    </main>
+  );
+}
