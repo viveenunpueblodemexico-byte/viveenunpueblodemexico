@@ -91,11 +91,7 @@ export async function getPuebloBySlug(slug) {
   const ref = collection(db, "pueblos");
 
   // ✅ Solo por slug (sin publicado)
-  const q = query(
-    ref,
-    where("slug", "==", slug),
-    limit(1)
-  );
+const q = query(ref, where("slug", "==", slug), where("publicado", "==", true), limit(1));
 
   const snap = await getDocs(q);
   if (!snap.empty) {

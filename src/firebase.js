@@ -12,7 +12,11 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+console.log("🔥 Firebase projectId (runtime):", app.options.projectId);
+
 export const db = getFirestore(app);
+console.log("🔥 Firestore runtime:", db.app.options.projectId);
+
 
 // ✅ Auth para Admin
 export const auth = getAuth(app);

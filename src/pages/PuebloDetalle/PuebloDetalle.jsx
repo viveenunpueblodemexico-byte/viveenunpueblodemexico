@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { getPuebloBySlug, getOfertasByPuebloId } from "../../services/pueblos";
-import { setPageSEO, buildAbsoluteUrl, clearManagedSEO } from "../../utils/seo";
+import { getPuebloBySlug } from "../../services/pueblos";
+import { getOfertasActivasByPuebloId } from "../../services/ofertas";import { setPageSEO, buildAbsoluteUrl, clearManagedSEO } from "../../utils/seo";
 
 export default function PuebloDetalle() {
   const { slug } = useParams();
@@ -47,8 +47,18 @@ export default function PuebloDetalle() {
       try {
         const data = await getPuebloBySlug(slug);
         setPueblo(data);
-        const ofs = data?.id ? await getOfertasByPuebloId(data.id, { max: 50 }) : [];
-        setOfertas(ofs);
+      // ⚠️ Importante: NO romper la página si las ofertas fallan por permisos.
+        if (data?.id) {
+          try {
+            const ofs = await getOfertasActivasByPuebloId(data.id, { max: 50 });
+            setOfertas(ofs);
+          } catch (errOfs) {
+            console.error(errOfs);
+            setOfertas([]);
+          }
+        } else {
+          setOfertas([]);
+        }
 
 
         // SEO + OG dinámico por pueblo

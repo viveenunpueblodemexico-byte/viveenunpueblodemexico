@@ -14,6 +14,10 @@ import {
 import { db } from "../firebase";
 import { slugify } from "../utils/slug";
 
+
+// ============================
+// Crear oferta dentro del pueblo (público)
+// ============================
 export async function crearOfertaPueblo({
   puebloId,
   puebloNombre,
@@ -53,6 +57,7 @@ export async function crearOfertaPueblo({
   const docRef = await addDoc(ref, payload);
   return docRef.id;
 }
+
 // ============================
 // Normalizer (para bolsas/admin)
 // ============================
@@ -80,13 +85,14 @@ function normalizeOfertaDoc(d, id) {
 }
 
 // ============================
-// Bolsa (público): ofertas activas por tipo
+// Bolsa (público): ofertas activas por tipo (collectionGroup)
+// ============================
+// ============================
+// Bolsa (público): ofertas activas por tipo (collectionGroup)
 // ============================
 export async function getOfertasActivas({ tipo = "trabajo", max = 200 } = {}) {
   const ref = collectionGroup(db, "ofertas");
 
-  // Nota: puede pedir índice compuesto en Firestore:
-  // activo == true, tipo == "trabajo", orderBy createdAt desc
   const q = query(
     ref,
     where("activo", "==", true),
@@ -95,12 +101,29 @@ export async function getOfertasActivas({ tipo = "trabajo", max = 200 } = {}) {
     limit(max)
   );
 
-  const snap = await getDocs(q);
-  return snap.docs.map((docu) => normalizeOfertaDoc(docu.data() || {}, docu.id));
+  try {
+    console.log("🧪 Query tipo:", tipo);
+    console.log("🧪 About to getDocs...");
+
+    const snap = await getDocs(q);
+
+    console.log("🧪 snap.size:", snap.size);
+    console.log("🧪 first path:", snap.docs[0]?.ref?.path);
+
+    return snap.docs.map((docu) => normalizeOfertaDoc(docu.data() || {}, docu.id));
+  } catch (e) {
+    console.error("❌ getOfertasActivas error:", e);
+    const code = e?.code || "";
+    const isDev = Boolean(import.meta?.env?.DEV);
+
+    if (code === "permission-denied" && !isDev) return [];
+    throw e;
+  }
 }
 
+
 // ============================
-// Admin: ofertas pendientes por tipo
+// Admin: ofertas pendientes por tipo (collectionGroup)
 // ============================
 export async function getOfertasPendientes({ tipo = "trabajo", max = 200 } = {}) {
   const ref = collectionGroup(db, "ofertas");
@@ -140,4 +163,35 @@ export async function rechazarOferta({ puebloId, ofertaId }) {
     status: "rechazada",
     updatedAt: serverTimestamp(),
   });
+}
+
+// ============================
+// Detalle de pueblo (público): ofertas activas por puebloId
+// ============================
+export async function getOfertasActivasByPuebloId(
+  puebloId,
+  { tipo = "trabajo", max = 50 } = {}
+) {
+  if (!puebloId) throw new Error("puebloId requerido");
+
+  const ref = collection(db, "pueblos", puebloId, "ofertas");
+
+  const q = query(
+    ref,
+    where("activo", "==", true),
+    where("tipo", "==", tipo),
+    orderBy("createdAt", "desc"),
+    limit(max)
+  );
+
+  try {
+    const snap = await getDocs(q);
+    return snap.docs.map((docu) => normalizeOfertaDoc(docu.data() || {}, docu.id));
+  } catch (e) {
+    const code = e?.code || "";
+    const isDev = Boolean(import.meta?.env?.DEV);
+
+    if (code === "permission-denied" && !isDev) return [];
+    throw e;
+  }
 }
