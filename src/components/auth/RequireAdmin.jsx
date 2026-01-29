@@ -27,6 +27,8 @@ export default function RequireAdmin({ children }) {
   }, []);
 
   if (loading) return <div style={{ padding: 24 }}>Cargando…</div>;
+  console.log("ADMIN CHECK user.email =", u?.email);
+  console.log("ADMIN ALLOWLIST =", allow);
 
   if (!user) {
     return <Navigate to="/admin/login" replace state={{ from: location.pathname }} />;
