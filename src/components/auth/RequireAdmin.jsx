@@ -27,14 +27,18 @@ export default function RequireAdmin({ children }) {
   }, []);
 
   if (loading) return <div style={{ padding: 24 }}>Cargando…</div>;
-  console.log("ADMIN CHECK user.email =", u?.email);
-  console.log("ADMIN ALLOWLIST =", allow);
+
 
   if (!user) {
     return <Navigate to="/admin/login" replace state={{ from: location.pathname }} />;
   }
 
   const email = (user.email || "").toLowerCase();
+  console.log("Pv5fo9NYXqUhY9Av9qQQLsi3Vk42", user?.uid);
+ console.log("ADMIN CHECK user.email =", email);
+ console.log("ADMIN ALLOWLIST =", allow);
+
+
   const isAllowed = allow.length === 0 ? false : allow.includes(email);
 
   if (!isAllowed) {
