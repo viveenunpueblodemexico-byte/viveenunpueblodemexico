@@ -17,6 +17,8 @@ import Trabajo from "../pages/Trabajo/Trabajo";
 import TrabajoPublicar from "../pages/Trabajo/TrabajoPublicar";
 import Vivienda from "../pages/Vivienda/Vivienda";
 import Traspasos from "../pages/Traspasos/Traspasos";
+import ViviendaPublicar from "../pages/Vivienda/ViviendaPublicar";
+import TraspasosPublicar from "../pages/Traspasos/TraspasosPublicar";
 
 export default function App() {
   return (
@@ -36,7 +38,10 @@ export default function App() {
         <Route path="/trabajo" element={<Trabajo />} />
         <Route path="/trabajo/publicar" element={<TrabajoPublicar />} />
         <Route path="/vivienda" element={<Vivienda />} />
+        <Route path="/vivienda/publicar" element={<ViviendaPublicar />} />
         <Route path="/traspasos" element={<Traspasos />} />
+        <Route path="/traspasos/publicar" element={<TraspasosPublicar />} />
+
 
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route

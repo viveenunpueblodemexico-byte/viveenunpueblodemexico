@@ -1,68 +1,103 @@
+// Igual que Vivienda.jsx pero cambiando tipo="traspasos" y textos
+// (Si quieres, lo dejo idéntico a tu estilo actual; este es el mínimo funcional.)
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Cog } from "lucide-react";
+import Container from "../../components/layout/Container/Container";
+import "../trabajo/trabajo.css";
 
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebase";
+import { isEmailAllowed } from "../../utils/admin";
+
+import { getOfertasActivas } from "../../services/ofertas";
 
 export default function Traspasos() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const [q, setQ] = useState("");
+  const [estadoSlug, setEstadoSlug] = useState("all");
+  const [adminUI, setAdminUI] = useState(false);
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => setAdminUI(isEmailAllowed(u?.email)));
+    return () => unsub();
+  }, []);
+
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      setError("");
+      try {
+        const data = await getOfertasActivas({ tipo: "traspasos", max: 200 });
+        setItems(data);
+      } catch (e) {
+        setError(e?.message || "No se pudieron cargar las ofertas.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  const estados = useMemo(() => {
+    const map = new Map();
+    for (const it of items) {
+      const key = it.estadoSlug || "sin-estado";
+      if (!map.has(key)) map.set(key, it.estado || "Sin estado");
+    }
+    return Array.from(map.entries()).sort((a, b) => a[1].localeCompare(b[1]));
+  }, [items]);
+
+  const filtered = useMemo(() => {
+    const needle = q.trim().toLowerCase();
+    return items.filter((it) => {
+      const okEstado = estadoSlug === "all" ? true : it.estadoSlug === estadoSlug;
+      const hay = `${it.titulo || ""} ${it.descripcion || ""} ${it.puebloNombre || ""} ${it.estado || ""}`
+        .toLowerCase()
+        .includes(needle);
+      return okEstado && hay;
+    });
+  }, [items, q, estadoSlug]);
+
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-6 relative">
-<div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center items-center">
-  <Link
-    to="/pueblos"
-    className="no-underline inline-flex items-center justify-center px-5 py-3 rounded-xl border border-gray-300 text-gray-900 hover:bg-gray-100 transition"
-  >
-    Explorar pueblos
-  </Link>
+    <Container>
+      <div className="trabajo-header">
+        <h1>Traspasos</h1>
+        <p className="trabajo-subtitle">Publicaciones aprobadas por la comunidad.</p>
 
-  <Link
-    to="/"
-    className="no-underline inline-flex items-center justify-center px-5 py-3 rounded-xl bg-gray-900 text-white hover:opacity-90 transition"
-  >
-    Volver al inicio
-  </Link>
-</div>
-      {/* Contenedor hero de engranes + logo */}
-      <div className="relative w-full max-w-3xl h-80 mb-10 flex items-center justify-center">
-
-
-        {/* Engrán grande (izquierda media) */}
-        <div
-          className="absolute -left-4 top-1/2 -translate-y-1/2"
-          style={{ zIndex: 1 }}
-        >
-          <Cog
-              className="w-10 h-10 text-gray-500"
-              style={{ animation: "spin 1.2s linear infinite" }}
-              aria-hidden
-            />
-        </div>
-
-        {/* Engrán mediano (derecha media) */}
-        <div
-          className="absolute -right-4 top-1/2 -translate-y-1/2"
-          style={{ zIndex: 1 }}
-        >
-          <Cog
-            className="w-24 h-24 animate-spin-reverse text-gray-500"
-            aria-hidden
-          />
-        </div>
-
-        {/* Engrán pequeño (abajo centro) */}
-        <div
-          className="absolute left-1/2 -translate-x-1/2 bottom-6"
-          style={{ zIndex: 1 }}
-        >
-          <Cog className="w-16 h-16 animate-spin-fast text-gray-500" aria-hidden />
+        <div className="trabajo-actions">
+          <Link className="btn" to="/traspasos/publicar">Publicar</Link>
+          {adminUI ? <Link className="btn" to="/admin/ofertas">Admin</Link> : null}
         </div>
       </div>
 
-      <h1 className="text-3xl font-semibold mb-2">Traspasos — Próximamente…</h1>
-      <p className="text-gray-600 max-w-prose">
-        Estamos preparando la sección de{" "}
-        <span className="font-medium">Traspasos y Proyectos</span>. Muy pronto
-        podrás descubrir negocios, espacios productivos y oportunidades para
-        emprender en pueblo.
-      </p>
-    </div>
+      <div className="trabajo-filters">
+        <input className="control" placeholder="Buscar…" value={q} onChange={(e) => setQ(e.target.value)} />
+        <select className="control" value={estadoSlug} onChange={(e) => setEstadoSlug(e.target.value)}>
+          <option value="all">Todos los estados</option>
+          {estados.map(([slug, name]) => (
+            <option key={slug} value={slug}>{name}</option>
+          ))}
+        </select>
+      </div>
+
+      {loading ? <p>Cargando…</p> : null}
+      {error ? <p style={{ color: "crimson" }}>{error}</p> : null}
+
+      <div className="trabajo-list">
+        {!loading && !error && filtered.length === 0 ? <p>No hay publicaciones por ahora.</p> : null}
+        {filtered.map((it) => (
+          <article key={it.id} className="trabajo-card">
+            <h3>{it.titulo}</h3>
+            <p className="trabajo-meta">{it.puebloNombre} · {it.estado} · traspasos</p>
+            <p className="trabajo-desc">{it.descripcion}</p>
+            {it.contactoEmail ? <p className="trabajo-contact">Contacto: {it.contactoEmail}</p> : null}
+            {it.puebloSlug ? <Link className="btn" to={`/pueblo/${it.puebloSlug}`}>Ver pueblo</Link> : null}
+          </article>
+        ))}
+      </div>
+    </Container>
   );
 }

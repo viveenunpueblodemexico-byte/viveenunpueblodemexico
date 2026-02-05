@@ -3,22 +3,39 @@ import { Link } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import Container from "../../components/layout/Container/Container";
 import { auth } from "../../firebase";
-import { aprobarOferta, getOfertasPendientes, rechazarOferta } from "../../services/ofertas";
+import {
+  aprobarOferta,
+  getOfertasPendientes,
+  rechazarOferta,
+  getOfertasPorStatus,
+  marcarOfertaTomada,
+  reactivarOferta,
+} from "../../services/ofertas";
 
 export default function AdminOfertas() {
   const [tipo, setTipo] = useState("trabajo");
+  const [vista, setVista] = useState("pendientes"); // pendientes | aprobadas | tomadas
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState("");
   const [error, setError] = useState("");
 
   const count = items.length;
-
+  const vistaLabel =
+    vista === "pendientes" ? "Pendientes" : vista === "aprobadas" ? "Aprobadas" : "Tomadas";
+ 
   async function load() {
     setLoading(true);
     setError("");
     try {
-      const data = await getOfertasPendientes({ tipo, max: 200 });
+      const data =
+        vista === "pendientes"
+          ? await getOfertasPendientes({ tipo, max: 200 })
+          : await getOfertasPorStatus({
+              tipo,
+              status: vista === "aprobadas" ? "aprobada" : "tomada",
+              max: 200,
+            });
       setItems(data);
     } catch (e) {
       setError(e?.message || "No se pudieron cargar las ofertas.");
@@ -27,10 +44,7 @@ export default function AdminOfertas() {
     }
   }
 
-  useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tipo]);
+useEffect(() => { load(); }, [tipo, vista]);
 
   async function onApprove(it) {
     setBusyId(it.id);
@@ -56,6 +70,30 @@ export default function AdminOfertas() {
     }
   }
 
+  async function onTaken(it) {
+    setBusyId(it.id);
+    try {
+      await marcarOfertaTomada({ puebloId: it.puebloId, ofertaId: it.id });
+      setItems((prev) => prev.filter((x) => x.id !== it.id));
+    } catch (e) {
+      alert(e?.message || "No se pudo marcar como tomada.");
+    } finally {
+      setBusyId("");
+    }
+  }
+
+  async function onReactivate(it) {
+    setBusyId(it.id);
+    try {
+      await reactivarOferta({ puebloId: it.puebloId, ofertaId: it.id });
+      setItems((prev) => prev.filter((x) => x.id !== it.id));
+    } catch (e) {
+      alert(e?.message || "No se pudo reactivar.");
+    } finally {
+      setBusyId("");
+    }
+  }
+
   const empty = useMemo(() => !loading && count === 0, [loading, count]);
 
   return (
@@ -64,10 +102,24 @@ export default function AdminOfertas() {
         <div style={{ display: "flex", gap: 10, justifyContent: "space-between", alignItems: "center", flexWrap: "wrap" }}>
           <div>
             <h1 style={{ marginBottom: 4 }}>Moderación de ofertas</h1>
-            <p>Pendientes: <b>{loading ? "…" : count}</b></p>
+            <p>
+              {vista === "pendientes" ? "Pendientes" : vista === "aprobadas" ? "Aprobadas" : "Tomadas"}:{" "}
+              <b>{loading ? "…" : count}</b>
+            </p>
           </div>
 
           <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+            <select
+              className="control"
+              value={vista}
+              onChange={(e) => setVista(e.target.value)}
+              disabled={loading}
+              title="Vista"
+            >
+              <option value="pendientes">Pendientes</option>
+              <option value="aprobadas">Aprobadas</option>
+              <option value="tomadas">Tomadas</option>
+            </select>
             <select
               className="control"
               value={tipo}
@@ -97,7 +149,7 @@ export default function AdminOfertas() {
 
         <div style={{ marginTop: 16, display: "grid", gap: 12 }}>
           {loading ? <div>Cargando…</div> : null}
-          {empty ? <div>No hay ofertas pendientes 🎉</div> : null}
+          {empty ? <div>No hay ofertas {vistaLabel.toLowerCase()} 🎉</div> : null}
 
           {items.map((it) => (
             <div
@@ -125,21 +177,33 @@ export default function AdminOfertas() {
                     </Link>
                   ) : null}
 
-                  <button
-                    className="btn btn--primary"
-                    onClick={() => onApprove(it)}
-                    disabled={busyId === it.id}
-                  >
-                    {busyId === it.id ? "…" : "Aprobar"}
-                  </button>
+               {vista === "pendientes" ? (
+                    <>
+                      <button className="btn btn--primary" onClick={() => onApprove(it)} disabled={busyId === it.id}>
+                        {busyId === it.id ? "…" : "Aprobar"}
+                      </button>
+                      <button className="btn" onClick={() => onReject(it)} disabled={busyId === it.id}>
+                        {busyId === it.id ? "…" : "Rechazar"}
+                      </button>
+                    </>
+                  ) : null}
 
-                  <button
-                    className="btn"
-                    onClick={() => onReject(it)}
-                    disabled={busyId === it.id}
-                  >
-                    {busyId === it.id ? "…" : "Rechazar"}
-                  </button>
+                  {vista === "aprobadas" ? (
+                    <>
+                      <button className="btn" onClick={() => onTaken(it)} disabled={busyId === it.id}>
+                        {busyId === it.id ? "…" : "Marcar tomada"}
+                      </button>
+                      <button className="btn" onClick={() => onReject(it)} disabled={busyId === it.id}>
+                        {busyId === it.id ? "…" : "Rechazar"}
+                      </button>
+                    </>
+                  ) : null}
+          
+                  {vista === "tomadas" ? (
+                    <button className="btn" onClick={() => onReactivate(it)} disabled={busyId === it.id}>
+                      {busyId === it.id ? "…" : "Reactivar"}
+                    </button>
+                  ) : null}
                 </div>
               </div>
 

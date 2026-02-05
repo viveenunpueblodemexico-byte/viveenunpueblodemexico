@@ -133,12 +133,14 @@ export async function getOfertasByPuebloId(puebloId, { max = 50 } = {}) {
 
   const ref = collection(db, "pueblos", puebloId, "ofertas");
 
-  const q = query(
-    ref,
-    where("activo", "==", true),
-    orderBy("createdAt", "desc"),
-    limit(max)
-  );
+const q = query(
+  ref,
+  where("activo", "==", true),
+  where("status", "==", "aprobada"),
+  orderBy("createdAt", "desc"),
+  limit(max)
+);
+
 
   const snap = await getDocs(q);
   return snap.docs.map(normalizeOferta);

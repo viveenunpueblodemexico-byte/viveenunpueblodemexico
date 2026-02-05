@@ -87,19 +87,17 @@ function normalizeOfertaDoc(d, id) {
 // ============================
 // Bolsa (público): ofertas activas por tipo (collectionGroup)
 // ============================
-// ============================
-// Bolsa (público): ofertas activas por tipo (collectionGroup)
-// ============================
 export async function getOfertasActivas({ tipo = "trabajo", max = 200 } = {}) {
   const ref = collectionGroup(db, "ofertas");
 
-  const q = query(
-    ref,
-    where("activo", "==", true),
-    where("tipo", "==", tipo),
-    orderBy("createdAt", "desc"),
-    limit(max)
-  );
+const q = query(
+  ref,
+  where("activo", "==", true),
+  where("status", "==", "aprobada"),
+  where("tipo", "==", tipo),
+  orderBy("createdAt", "desc"),
+  limit(max)
+);
 
   try {
     console.log("🧪 Query tipo:", tipo);
@@ -140,6 +138,24 @@ export async function getOfertasPendientes({ tipo = "trabajo", max = 200 } = {})
   return snap.docs.map((docu) => normalizeOfertaDoc(docu.data() || {}, docu.id));
 }
 
+// Admin: listar por status (ej: "aprobada", "tomada")
+export async function getOfertasPorStatus({ tipo, status, max = 100 }) {
+  if (!tipo) throw new Error("Falta 'tipo'.");
+  if (!status) throw new Error("Falta 'status'.");
+
+  const q = query(
+    collectionGroup(db, "ofertas"),
+    where("tipo", "==", tipo),
+    where("status", "==", status),
+    orderBy("createdAt", "desc"),
+    limit(max)
+  );
+
+  const snap = await getDocs(q);
+  return snap.docs.map((docu) => normalizeOfertaDoc(docu.data() || {}, docu.id));
+ 
+}
+
 // ============================
 // Admin: aprobar / rechazar (por puebloId + ofertaId)
 // ============================
@@ -176,13 +192,14 @@ export async function getOfertasActivasByPuebloId(
 
   const ref = collection(db, "pueblos", puebloId, "ofertas");
 
-  const q = query(
-    ref,
-    where("activo", "==", true),
-    where("tipo", "==", tipo),
-    orderBy("createdAt", "desc"),
-    limit(max)
-  );
+const q = query(
+  ref,
+  where("activo", "==", true),
+  where("status", "==", "aprobada"),
+  where("tipo", "==", tipo),
+  orderBy("createdAt", "desc"),
+  limit(max)
+);
 
   try {
     const snap = await getDocs(q);
@@ -194,4 +211,33 @@ export async function getOfertasActivasByPuebloId(
     if (code === "permission-denied" && !isDev) return [];
     throw e;
   }
+}
+
+// ============================
+// Admin: marcar como tomada/cerrada
+// ============================
+export async function marcarOfertaTomada({ puebloId, ofertaId }) {
+  if (!puebloId || !ofertaId) throw new Error("puebloId y ofertaId requeridos");
+  const ref = doc(db, "pueblos", puebloId, "ofertas", ofertaId);
+
+  await updateDoc(ref, {
+    activo: false,
+    status: "tomada",
+    tomadaAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+}
+
+// ============================
+// Admin: reactivar (volver a aprobada/visible)
+// ============================
+export async function reactivarOferta({ puebloId, ofertaId }) {
+  if (!puebloId || !ofertaId) throw new Error("puebloId y ofertaId requeridos");
+  const ref = doc(db, "pueblos", puebloId, "ofertas", ofertaId);
+
+  await updateDoc(ref, {
+    activo: true,
+    status: "aprobada",
+    updatedAt: serverTimestamp(),
+  });
 }
