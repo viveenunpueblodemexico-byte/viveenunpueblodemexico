@@ -1,0 +1,108 @@
+/* src/pages/Vivienda/vivienda.css */
+/* Basado en src/pages/Trabajo/trabajo.css */
+
+.viviendaPage {
+  padding: 48px 0 72px;
+}
+
+.viviendaTop {
+  margin-bottom: 24px;
+}
+
+.viviendaActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+/* empuja el CTA “Publicar vivienda” a la derecha en desktop */
+.viviendaActions .btn.btn--primary {
+  margin-left: auto;
+}
+
+.viviendaHeader {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.viviendaTitle {
+  margin: 0 0 10px;
+  font-size: clamp(34px, 4.2vw, 54px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.viviendaLead {
+  margin: 0 auto;
+  max-width: 72ch;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Filtros / lista (mínimo para que no se vea “vacío”) */
+.viviendaFilters {
+  margin: 18px 0 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.viviendaList {
+  display: grid;
+  gap: 14px;
+}
+
+.viviendaCard {
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 18px;
+  padding: 16px;
+  background: var(--surface, #fff);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+}
+
+.viviendaMeta {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.viviendaDesc {
+  margin: 10px 0 0;
+  line-height: 1.6;
+}
+
+.viviendaContact {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.viviendaEmpty {
+  border: 1px dashed rgba(15, 23, 42, 0.22);
+  border-radius: 18px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.viviendaEmpty h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+.viviendaEmpty p {
+  margin: 0 0 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* responsive: CTA ya no se va “hasta la derecha” si no hay espacio */
+@media (max-width: 720px) {
+  .viviendaActions .btn.btn--primary {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+}

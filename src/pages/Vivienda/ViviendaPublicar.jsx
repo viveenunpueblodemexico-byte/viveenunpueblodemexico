@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import Container from "../../components/layout/Container/Container";
 import { getPueblosPublicados } from "../../services/pueblos";
 import { crearOfertaPueblo } from "../../services/ofertas";
-import "../trabajo/TrabajoPublicar.css";
+import "./viviendaPublicar.css";
 
 export default function ViviendaPublicar() {
   const showDevHints = import.meta.env.DEV;
@@ -77,50 +78,63 @@ export default function ViviendaPublicar() {
   }
 
   return (
-    <div className="publicar-wrap">
-      <div className="publicar-head">
-        <h1>Publicar vivienda</h1>
-        <p>Se mostrará en el sitio una vez aprobada.</p>
-      </div>
+    <Container>
+      <section className="viviendaPublicar">
+        <div className="viviendaPublicar__header">
+          <div>
+            <h1 className="viviendaPublicar__title">Publicar vivienda</h1>
+            <p className="viviendaPublicar__subtitle">Se mostrará en el sitio una vez aprobada.</p>
+          </div>
+          <Link className="viviendaPublicar__back" to="/vivienda">← Volver</Link>
+        </div>
 
-     <div className="publicar-actions">
-        <Link className="btn" to="/vivienda">← Volver</Link>
-      </div>
+        {loading ? <p>Cargando…</p> : null}
+        {error ? <div className="viviendaAlert viviendaAlert--error">{error}</div> : null}
+        {ok ? <div className="viviendaAlert viviendaAlert--ok">{ok}</div> : null}
 
-      {loading ? <p>Cargando…</p> : null}
-      {error ? <p style={{ color: "crimson" }}>{error}</p> : null}
-      {ok ? <p style={{ color: "green" }}>{ok}</p> : null}
+        <div className="viviendaPublicar__card">
+          <form onSubmit={onSubmit} className="viviendaPublicar__grid">
+            <div className="field full">
+              <label>Pueblo</label>
+              <select className="control" value={puebloId} onChange={(e) => setPuebloId(e.target.value)} required>
+                <option value="">Selecciona…</option>
+                {pueblos.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nombre} — {p.estado}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-      <form className="publicar-form" onSubmit={onSubmit}>
-        <label>Pueblo</label>
-        <select value={puebloId} onChange={(e) => setPuebloId(e.target.value)} required>
-          <option value="">Selecciona…</option>
-          {pueblos.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.nombre} — {p.estado}
-            </option>
-          ))}
-       </select>
+            <div className="field full">
+              <label>Título</label>
+              <input className="control" value={titulo} onChange={(e) => setTitulo(e.target.value)} required minLength={3} />
+            </div>
 
-        <label>Título</label>
-        <input value={titulo} onChange={(e) => setTitulo(e.target.value)} required minLength={3} />
+            <div className="field full">
+              <label>Descripción</label>
+              <textarea className="control" value={descripcion} onChange={(e) => setDescripcion(e.target.value)} required minLength={10} />
+            </div>
 
-        <label>Descripción</label>
-        <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} required minLength={10} />
+            <div className="field full">
+              <label>Contacto (email)</label>
+              <input className="control" type="email" value={contactoEmail} onChange={(e) => setContactoEmail(e.target.value)} />
+            </div>
 
-        <label>Contacto (email)</label>
-        <input type="email" value={contactoEmail} onChange={(e) => setContactoEmail(e.target.value)} />
+            <div className="viviendaPublicar__actions full">
+              <button className="viviendaBtnPrimary" disabled={saving}>
+                {saving ? "Publicando…" : "Publicar"}
+              </button>
+            </div>
 
-        <button className="btn btn--primary" disabled={saving}>
-          {saving ? "Publicando…" : "Publicar"}
-        </button>
-
-        {showDevHints ? (
-          <p style={{ opacity: 0.65, fontSize: 12 }}>
-            DEV: status=pendiente, activo=false, tipo=vivienda
-          </p>
-        ) : null}
-      </form>
-    </div>
+            {showDevHints ? (
+              <p className="viviendaPublicar__note full">
+                DEV: status=pendiente, activo=false, tipo=vivienda
+              </p>
+            ) : null}
+          </form>
+        </div>
+      </section>
+    </Container>
   );
 }

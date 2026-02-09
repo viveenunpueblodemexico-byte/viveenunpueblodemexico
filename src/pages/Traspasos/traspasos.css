@@ -1,0 +1,72 @@
+/* src/pages/Traspasos/traspasos.css */
+/* Basado en src/pages/Trabajo/trabajo.css */
+
+.traspasosPage { padding: 48px 0 72px; }
+.traspasosTop { margin-bottom: 24px; }
+
+.traspasosActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+/* empuja el CTA “Publicar traspaso” a la derecha en desktop */
+.traspasosActions .btn.btn--primary { margin-left: auto; }
+
+.traspasosHeader { margin-top: 12px; text-align: center; }
+
+.traspasosTitle {
+  margin: 0 0 10px;
+  font-size: clamp(34px, 4.2vw, 54px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.traspasosLead {
+  margin: 0 auto;
+  max-width: 72ch;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.traspasosFilters {
+  margin: 18px 0 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.traspasosList { display: grid; gap: 14px; }
+
+.traspasosCard {
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 18px;
+  padding: 16px;
+  background: var(--surface, #fff);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+}
+
+.traspasosMeta { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+.traspasosDesc { margin: 10px 0 0; line-height: 1.6; }
+.traspasosContact { margin: 10px 0 0; font-size: 13px; color: var(--muted); }
+
+.traspasosEmpty {
+  border: 1px dashed rgba(15, 23, 42, 0.22);
+  border-radius: 18px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.traspasosEmpty h3 { margin: 0 0 6px; font-size: 16px; }
+.traspasosEmpty p { margin: 0 0 12px; color: var(--muted); line-height: 1.6; }
+
+@media (max-width: 720px) {
+  .traspasosActions .btn.btn--primary {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+}
