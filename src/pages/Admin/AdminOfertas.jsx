@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import Container from "../../components/layout/Container/Container";
 import { auth } from "../../firebase";
@@ -13,8 +13,13 @@ import {
 } from "../../services/ofertas";
 
 export default function AdminOfertas() {
-  const [tipo, setTipo] = useState("trabajo");
-  const [vista, setVista] = useState("pendientes"); // pendientes | aprobadas | tomadas
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const initialTipo = searchParams.get("tipo") || "trabajo";
+  const initialVista = searchParams.get("vista") || "pendientes"; // pendientes | aprobadas | rechazadas | tomadas
+
+  const [tipo, setTipo] = useState(initialTipo);
+  const [vista, setVista] = useState(initialVista);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState("");
@@ -22,7 +27,22 @@ export default function AdminOfertas() {
 
   const count = items.length;
   const vistaLabel =
-    vista === "pendientes" ? "Pendientes" : vista === "aprobadas" ? "Aprobadas" : "Tomadas";
+    vista === "pendientes"
+      ? "Pendientes"
+      : vista === "aprobadas"
+      ? "Aprobadas"
+      : vista === "rechazadas"
+      ? "Rechazadas"
+      : "Tomadas";
+  // Sync a URL para compartir/recargar sin perder estado
+  useEffect(() => {
+    setSearchParams((prev) => {
+    const next = new URLSearchParams(prev);
+    next.set("tipo", tipo);
+    next.set("vista", vista);
+    return next;
+  }, { replace: true });
+  }, [tipo, vista, setSearchParams]);
  
   async function load() {
     setLoading(true);
@@ -33,7 +53,12 @@ export default function AdminOfertas() {
           ? await getOfertasPendientes({ tipo, max: 200 })
           : await getOfertasPorStatus({
               tipo,
-              status: vista === "aprobadas" ? "aprobada" : "tomada",
+              status:
+                vista === "aprobadas"
+                  ? "aprobada"
+                  : vista === "rechazadas"
+                  ? "rechazada"
+                  : "tomada",
               max: 200,
             });
       setItems(data);
@@ -45,6 +70,17 @@ export default function AdminOfertas() {
   }
 
 useEffect(() => { load(); }, [tipo, vista]);
+
+  const tabBtn = (active) => ({
+    padding: "8px 12px",
+    borderRadius: 999,
+    border: "1px solid var(--border)",
+    background: active ? "var(--text)" : "transparent",
+    color: active ? "white" : "var(--text)",
+    cursor: "pointer",
+    fontWeight: 700,
+    fontSize: 13,
+  });
 
   async function onApprove(it) {
     setBusyId(it.id);
@@ -102,34 +138,28 @@ useEffect(() => { load(); }, [tipo, vista]);
         <div style={{ display: "flex", gap: 10, justifyContent: "space-between", alignItems: "center", flexWrap: "wrap" }}>
           <div>
             <h1 style={{ marginBottom: 4 }}>Moderación de ofertas</h1>
-            <p>
-              {vista === "pendientes" ? "Pendientes" : vista === "aprobadas" ? "Aprobadas" : "Tomadas"}:{" "}
-              <b>{loading ? "…" : count}</b>
+
+             <p>
+              {vistaLabel}: <b>{loading ? "…" : count}</b>
             </p>
+
           </div>
 
           <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-            <select
-              className="control"
-              value={vista}
-              onChange={(e) => setVista(e.target.value)}
-              disabled={loading}
-              title="Vista"
-            >
-              <option value="pendientes">Pendientes</option>
-              <option value="aprobadas">Aprobadas</option>
-              <option value="tomadas">Tomadas</option>
-            </select>
-            <select
-              className="control"
-              value={tipo}
-              onChange={(e) => setTipo(e.target.value)}
-              disabled={loading}
-            >
-              <option value="trabajo">Trabajo</option>
-              <option value="vivienda">Vivienda</option>
-              <option value="traspasos">Traspasos</option>
-            </select>
+            {/* Tabs: Vista */}
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <button style={tabBtn(vista === "pendientes")} onClick={() => setVista("pendientes")} disabled={loading}>Pendientes</button>
+              <button style={tabBtn(vista === "aprobadas")} onClick={() => setVista("aprobadas")} disabled={loading}>Aprobadas</button>
+              <button style={tabBtn(vista === "rechazadas")} onClick={() => setVista("rechazadas")} disabled={loading}>Rechazadas</button>
+              <button style={tabBtn(vista === "tomadas")} onClick={() => setVista("tomadas")} disabled={loading}>Tomadas</button>
+            </div>
+
+            {/* Tabs: Tipo */}
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <button style={tabBtn(tipo === "trabajo")} onClick={() => setTipo("trabajo")} disabled={loading}>Trabajo</button>
+              <button style={tabBtn(tipo === "vivienda")} onClick={() => setTipo("vivienda")} disabled={loading}>Vivienda</button>
+              <button style={tabBtn(tipo === "traspasos")} onClick={() => setTipo("traspasos")} disabled={loading}>Traspasos</button>
+            </div>
 
             <button className="btn" onClick={load} disabled={loading}>
               Recargar
@@ -166,7 +196,14 @@ useEffect(() => { load(); }, [tipo, vista]);
                 <div>
                   <div style={{ fontWeight: 800 }}>{it.titulo}</div>
                   <div style={{ opacity: 0.8, fontSize: 14 }}>
-                    {it.puebloNombre || "—"} · {it.estado || "—"} · <b>{it.tipo}</b> · <span>status: {it.status}</span>
+                    {it.puebloNombre || "—"} · {it.estado || "—"}{" "}
+                    <span style={{ marginLeft: 8, padding: "2px 8px", borderRadius: 999, border: "1px solid var(--border)", fontSize: 12 }}>
+                      {it.tipo}
+                    </span>
+                    <span style={{ marginLeft: 8, padding: "2px 8px", borderRadius: 999, border: "1px solid var(--border)", fontSize: 12, opacity: 0.9 }}>
+                      {it.status}
+                    </span>
+
                   </div>
                 </div>
 
@@ -204,6 +241,13 @@ useEffect(() => { load(); }, [tipo, vista]);
                       {busyId === it.id ? "…" : "Reactivar"}
                     </button>
                   ) : null}
+
+                  {vista === "rechazadas" ? (
+                    <button className="btn" onClick={() => onReactivate(it)} disabled={busyId === it.id}>
+                      {busyId === it.id ? "…" : "Reactivar"}
+                    </button>
+                  ) : null}
+
                 </div>
               </div>
 

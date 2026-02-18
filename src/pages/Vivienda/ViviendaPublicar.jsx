@@ -4,6 +4,13 @@ import Container from "../../components/layout/Container/Container";
 import { getPueblosPublicados } from "../../services/pueblos";
 import { crearOfertaPueblo } from "../../services/ofertas";
 import "./viviendaPublicar.css";
+import {
+  getCooldownRemaining,
+  isLikelyBot,
+  sanitizeText,
+  setLastSubmitNow,
+  validateOffer,
+} from "../../utils/antiSpam";
 
 export default function ViviendaPublicar() {
   const showDevHints = import.meta.env.DEV;
@@ -17,6 +24,7 @@ export default function ViviendaPublicar() {
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [contactoEmail, setContactoEmail] = useState("");
+  const [website, setWebsite] = useState(""); // honeypot
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -55,16 +63,31 @@ export default function ViviendaPublicar() {
     try {
       const pueblo = pueblos.find((p) => p.id === puebloId);
       if (!pueblo) throw new Error("Selecciona un pueblo.");
+
+      if (isLikelyBot(website)) throw new Error("No se pudo publicar. Intenta de nuevo más tarde.");
+
+      const cdKey = "vupm:last_submit_vivienda";
+      const remaining = getCooldownRemaining(cdKey);
+      if (remaining > 0) {
+        const secs = Math.ceil(remaining / 1000);
+        throw new Error(`Espera ${secs}s antes de publicar otra oferta.`);
+      }
+
+      const v = validateOffer({ titulo, descripcion, contactoEmail });
+      if (v) throw new Error(v);
+
+
       await crearOfertaPueblo({
         puebloId,
         puebloNombre: pueblo.nombre,
         puebloSlug: pueblo.slug,
         estado: pueblo.estado,
         tipo: "vivienda",
-        titulo,
-        descripcion,
-        contactoEmail,
+        titulo: sanitizeText(titulo),
+        descripcion: (descripcion || "").trim(),
+        contactoEmail: sanitizeText(contactoEmail),
       });
+      setLastSubmitNow(cdKey);
       setOk("¡Listo! Tu publicación quedó registrada para revisión.");
       setTitulo("");
       setDescripcion("");
@@ -94,6 +117,16 @@ export default function ViviendaPublicar() {
 
         <div className="viviendaPublicar__card">
           <form onSubmit={onSubmit} className="viviendaPublicar__grid">
+            <div className="field full" style={{ display: "none" }} aria-hidden="true">
+              <label>Website</label>
+              <input
+                className="control"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                autoComplete="off"
+                tabIndex={-1}
+              />
+            </div>
             <div className="field full">
               <label>Pueblo</label>
               <select className="control" value={puebloId} onChange={(e) => setPuebloId(e.target.value)} required>

@@ -5,6 +5,13 @@ import "./traspasosPublicar.css";
 
 import { getPueblosPublicados } from "../../services/pueblos";
 import { crearOfertaPueblo } from "../../services/ofertas";
+import {
+  getCooldownRemaining,
+  isLikelyBot,
+  sanitizeText,
+  setLastSubmitNow,
+  validateOffer,
+} from "../../utils/antiSpam";
 
 export default function TraspasosPublicar() {
   const showDevHints = import.meta.env.DEV;
@@ -18,6 +25,7 @@ export default function TraspasosPublicar() {
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [contactoEmail, setContactoEmail] = useState("");
+  const [website, setWebsite] = useState(""); // honeypot
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -59,16 +67,29 @@ export default function TraspasosPublicar() {
       const pueblo = pueblos.find((p) => p.id === puebloId);
       if (!pueblo) throw new Error("Selecciona un pueblo.");
 
+      if (isLikelyBot(website)) throw new Error("No se pudo publicar. Intenta de nuevo más tarde.");
+
+      const cdKey = "vupm:last_submit_traspasos";
+      const remaining = getCooldownRemaining(cdKey);
+      if (remaining > 0) {
+        const secs = Math.ceil(remaining / 1000);
+        throw new Error(`Espera ${secs}s antes de publicar otra oferta.`);
+      }
+
+      const v = validateOffer({ titulo, descripcion, contactoEmail });
+      if (v) throw new Error(v);
+
       await crearOfertaPueblo({
         puebloId,
         puebloNombre: pueblo.nombre,
         puebloSlug: pueblo.slug,
         estado: pueblo.estado,
         tipo: "traspasos",
-        titulo,
-        descripcion,
-        contactoEmail,
+        titulo: sanitizeText(titulo),
+        descripcion: (descripcion || "").trim(),
+        contactoEmail: sanitizeText(contactoEmail),
       });
+      setLastSubmitNow(cdKey);
 
       setOk("¡Listo! Tu publicación quedó registrada para revisión.");
       setTitulo("");
@@ -99,69 +120,82 @@ export default function TraspasosPublicar() {
         {ok ? <div className="traspasosAlert traspasosAlert--ok">{ok}</div> : null}
 
         <div className="traspasosPublicar__card">
-          <form onSubmit={onSubmit} className="traspasosPublicar__grid">
-            <div className="field full">
-              <label>Pueblo</label>
-              <select
-                className="control"
-                value={puebloId}
-                onChange={(e) => setPuebloId(e.target.value)}
-                required
-              >
-                <option value="">Selecciona…</option>
-                {pueblos.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.nombre} — {p.estado}
-                  </option>
-                ))}
-              </select>
-            </div>
+  <form onSubmit={onSubmit} className="traspasosPublicar__grid">
+    <div className="field full" style={{ display: "none" }} aria-hidden="true">
+      <label>Website</label>
+      <input
+        className="control"
+        value={website}
+        onChange={(e) => setWebsite(e.target.value)}
+        autoComplete="off"
+        tabIndex={-1}
+      />
+    </div>
 
-            <div className="field full">
-              <label>Título</label>
-              <input
-                className="control"
-                value={titulo}
-                onChange={(e) => setTitulo(e.target.value)}
-                required
-                minLength={3}
-              />
-            </div>
+    <div className="field full">
+      <label>Pueblo</label>
+      <select
+        className="control"
+        value={puebloId}
+        onChange={(e) => setPuebloId(e.target.value)}
+        required
+      >
+        <option value="">Selecciona…</option>
+        {pueblos.map((p) => (
+          <option key={p.id} value={p.id}>
+            {p.nombre} — {p.estado}
+          </option>
+        ))}
+      </select>
+    </div>
 
-            <div className="field full">
-              <label>Descripción</label>
-              <textarea
-                className="control"
-                value={descripcion}
-                onChange={(e) => setDescripcion(e.target.value)}
-                required
-                minLength={10}
-              />
-            </div>
+    <div className="field full">
+      <label>Título</label>
+      <input
+        className="control"
+        value={titulo}
+        onChange={(e) => setTitulo(e.target.value)}
+        required
+        minLength={3}
+      />
+    </div>
 
-            <div className="field full">
-              <label>Contacto (email)</label>
-              <input
-                className="control"
-                type="email"
-                value={contactoEmail}
-                onChange={(e) => setContactoEmail(e.target.value)}
-              />
-            </div>
+    <div className="field full">
+      <label>Descripción</label>
+      <textarea
+        className="control"
+        value={descripcion}
+        onChange={(e) => setDescripcion(e.target.value)}
+        required
+        minLength={10}
+      />
+    </div>
 
-            <div className="traspasosPublicar__actions full">
-              <button className="traspasosBtnPrimary" disabled={saving}>
-                {saving ? "Publicando…" : "Publicar"}
-              </button>
-            </div>
+    <div className="field full">
+      <label>Contacto (email)</label>
+      <input
+        className="control"
+        type="email"
+        value={contactoEmail}
+        onChange={(e) => setContactoEmail(e.target.value)}
+      />
+    </div>
 
-            {showDevHints ? (
-              <p className="traspasosPublicar__note full">
-                DEV: status=pendiente, activo=false, tipo=traspasos
-              </p>
-            ) : null}
-          </form>
-        </div>
+    <div className="traspasosPublicar__actions full">
+      <button className="btn btn--primary" type="submit" disabled={saving}>
+        {saving ? "Publicando…" : "Publicar"}
+      </button>
+    </div>
+
+    {showDevHints ? (
+      <p className="traspasosPublicar__note full">
+        DEV: status=pendiente, activo=false, tipo=traspasos
+      </p>
+    ) : null}
+  </form>
+</div>
+
+        
       </section>
     </Container>
   );
