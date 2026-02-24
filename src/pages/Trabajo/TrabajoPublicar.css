@@ -132,3 +132,20 @@ textarea.control {
   font-size: 12px;
   color: var(--muted, #667085);
 }
+.publicar__loginCard{
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.publicar__loginTitle{
+  margin: 0 0 6px;
+}
+
+.publicar__loginSub{
+  margin: 0 0 12px;
+  opacity: .8;
+  line-height: 1.35;
+}

@@ -19,6 +19,9 @@ import Vivienda from "../pages/Vivienda/Vivienda";
 import Traspasos from "../pages/Traspasos/Traspasos";
 import ViviendaPublicar from "../pages/Vivienda/ViviendaPublicar";
 import TraspasosPublicar from "../pages/Traspasos/TraspasosPublicar";
+import Login from "../pages/Login/Login";
+import MisPublicacionesPage from "../pages/MisPublicaciones/MisPublicaciones";
+import RequireUser from "../components/auth/RequireUser";
 
 export default function App() {
   return (
@@ -29,6 +32,7 @@ export default function App() {
        <main className="appMain">
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/estados" element={<Estados />} />
         <Route path="/estado/:estadoSlug" element={<Estado />} />
 
@@ -36,11 +40,21 @@ export default function App() {
         <Route path="/pueblo/:slug" element={<PuebloDetalle />} />
 
         <Route path="/trabajo" element={<Trabajo />} />
-        <Route path="/trabajo/publicar" element={<TrabajoPublicar />} />
         <Route path="/vivienda" element={<Vivienda />} />
-        <Route path="/vivienda/publicar" element={<ViviendaPublicar />} />
         <Route path="/traspasos" element={<Traspasos />} />
+        
+        <Route path="/trabajo/publicar" element={<TrabajoPublicar />} />
+        <Route path="/vivienda/publicar" element={<ViviendaPublicar />} />
         <Route path="/traspasos/publicar" element={<TraspasosPublicar />} />
+        
+        <Route
+          path="/mis-publicaciones"
+          element={
+            <RequireUser>
+              <MisPublicacionesPage />
+            </RequireUser>
+          }
+        />
 
 
         <Route path="/admin/login" element={<AdminLogin />} />

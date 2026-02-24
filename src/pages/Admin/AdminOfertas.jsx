@@ -24,6 +24,8 @@ export default function AdminOfertas() {
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState("");
   const [error, setError] = useState("");
+  const [pendientesCount, setPendientesCount] = useState(0);
+
 
   const count = items.length;
   const vistaLabel =
@@ -69,7 +71,22 @@ export default function AdminOfertas() {
     }
   }
 
-useEffect(() => { load(); }, [tipo, vista]);
+  async function loadPendientesCount() {
+  try {
+    const data = await getOfertasPendientes({ tipo, max: 200 });
+    setPendientesCount(data.length);
+  } catch {
+    // si falla, no rompemos UI
+    setPendientesCount(0);
+  }
+}
+
+
+    useEffect(() => { 
+      load(); 
+      loadPendientesCount();
+    }, [tipo, vista]);
+
 
   const tabBtn = (active) => ({
     padding: "8px 12px",
@@ -87,6 +104,8 @@ useEffect(() => { load(); }, [tipo, vista]);
     try {
       await aprobarOferta({ puebloId: it.puebloId, ofertaId: it.id });
       setItems((prev) => prev.filter((x) => x.id !== it.id));
+      await loadPendientesCount();
+
     } catch (e) {
       alert(e?.message || "No se pudo aprobar.");
     } finally {
@@ -95,40 +114,38 @@ useEffect(() => { load(); }, [tipo, vista]);
   }
 
   async function onReject(it) {
-    setBusyId(it.id);
-    try {
-      await rechazarOferta({ puebloId: it.puebloId, ofertaId: it.id });
-      setItems((prev) => prev.filter((x) => x.id !== it.id));
-    } catch (e) {
-      alert(e?.message || "No se pudo rechazar.");
-    } finally {
-      setBusyId("");
-    }
+  setBusyId(it.id);
+  try {
+    await rechazarOferta({ puebloId: it.puebloId, ofertaId: it.id });
+    setItems((prev) => prev.filter((x) => x.id !== it.id));
+    await loadPendientesCount();
+  } finally {
+    setBusyId("");
   }
+}
 
-  async function onTaken(it) {
-    setBusyId(it.id);
-    try {
-      await marcarOfertaTomada({ puebloId: it.puebloId, ofertaId: it.id });
-      setItems((prev) => prev.filter((x) => x.id !== it.id));
-    } catch (e) {
-      alert(e?.message || "No se pudo marcar como tomada.");
-    } finally {
-      setBusyId("");
-    }
+async function onTaken(it) {
+  setBusyId(it.id);
+  try {
+    await marcarOfertaTomada({ puebloId: it.puebloId, ofertaId: it.id });
+    setItems((prev) => prev.filter((x) => x.id !== it.id));
+    await loadPendientesCount();
+  } finally {
+    setBusyId("");
   }
+}
 
-  async function onReactivate(it) {
-    setBusyId(it.id);
-    try {
-      await reactivarOferta({ puebloId: it.puebloId, ofertaId: it.id });
-      setItems((prev) => prev.filter((x) => x.id !== it.id));
-    } catch (e) {
-      alert(e?.message || "No se pudo reactivar.");
-    } finally {
-      setBusyId("");
-    }
+async function onReactivate(it) {
+  setBusyId(it.id);
+  try {
+    await reactivarOferta({ puebloId: it.puebloId, ofertaId: it.id });
+    setItems((prev) => prev.filter((x) => x.id !== it.id));
+    await loadPendientesCount();
+  } finally {
+    setBusyId("");
   }
+}
+
 
   const empty = useMemo(() => !loading && count === 0, [loading, count]);
 
@@ -148,7 +165,10 @@ useEffect(() => { load(); }, [tipo, vista]);
           <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
             {/* Tabs: Vista */}
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              <button style={tabBtn(vista === "pendientes")} onClick={() => setVista("pendientes")} disabled={loading}>Pendientes</button>
+              <button style={tabBtn(vista === "pendientes")} onClick={() => setVista("pendientes")} disabled={loading}>
+                Pendientes {loading ? "" : `(${pendientesCount})`}
+              </button>
+
               <button style={tabBtn(vista === "aprobadas")} onClick={() => setVista("aprobadas")} disabled={loading}>Aprobadas</button>
               <button style={tabBtn(vista === "rechazadas")} onClick={() => setVista("rechazadas")} disabled={loading}>Rechazadas</button>
               <button style={tabBtn(vista === "tomadas")} onClick={() => setVista("tomadas")} disabled={loading}>Tomadas</button>

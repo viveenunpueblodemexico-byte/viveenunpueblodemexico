@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Container from "../../components/layout/Container/Container";
 import "./traspasos.css";
+import { timeAgo } from "../../utils/date";
 
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
@@ -117,7 +118,11 @@ export default function Traspasos() {
           {filtered.map((it) => (
             <article key={it.id} className="traspasosCard">
               <h3>{it.titulo}</h3>
-              <p className="traspasosMeta">{it.puebloNombre} · {it.estado}</p>
+              <p className="traspasosMeta">
+                {it.puebloNombre} · {it.estado}
+                {it.createdAt ? ` · ${timeAgo(it.createdAt)}` : ""}
+              </p>
+
               <p className="traspasosDesc">{it.descripcion}</p>
               {it.contactoEmail ? <p className="traspasosContact">Contacto: {it.contactoEmail}</p> : null}
               {it.puebloSlug ? <Link className="btn" to={`/pueblo/${it.puebloSlug}`}>Ver pueblo</Link> : null}

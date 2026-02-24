@@ -1,0 +1,50 @@
+.mispub { padding: 24px 0; }
+.mispub__header { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; margin-bottom:16px; }
+.mispub__title { margin:0; }
+.mispub__subtitle { margin:6px 0 0; opacity:.8; max-width:720px; }
+
+.mispub__controls { margin: 14px 0 18px; display:flex; gap:12px; align-items:center; }
+.mispub__filter { display:flex; flex-direction:column; gap:6px; font-size:14px; }
+.mispub__filter select { padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.15); background:transparent; color:inherit; }
+
+.mispub__list { display:grid; gap:12px; }
+.mispub__card { border:1px solid rgba(255,255,255,.10); border-radius:14px; padding:14px; background: rgba(255,255,255,.03); }
+.mispub__titleRow { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.mispub__cardTitle { margin:0; font-size:16px; }
+.mispub__meta { margin-top:8px; opacity:.75; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.mispub__pill { border:1px solid rgba(255,255,255,.14); padding:2px 8px; border-radius:999px; font-size:12px; opacity:.9; }
+.mispub__dot { opacity:.5; }
+
+.mispub__stats{
+  display:flex; gap:10px; flex-wrap:wrap;
+  margin: 8px 0 16px;
+}
+.stat{
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;
+  padding:10px 12px;
+  min-width:110px;
+  background: rgba(255,255,255,.03);
+  display:flex; flex-direction:column; gap:2px;
+}
+.stat b{ font-size:18px; }
+.stat span{ opacity:.75; font-size:12px; }
+
+.mispub__desc { margin: 10px 0 0; opacity:.9; }
+.mispub__footer { margin-top:12px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.mispub__place { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.mispub__muted { opacity:.75; }
+.mispub__link { text-decoration:none; opacity:.9; }
+.mispub__link:hover { opacity:1; text-decoration:underline; }
+
+.mispub__empty { border:1px dashed rgba(255,255,255,.18); border-radius:14px; padding:16px; }
+.mispub__cta { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+.mispub__loading { padding:12px 0; opacity:.85; }
+
+/* Badges (simple) */
+.badge { font-size:12px; padding:2px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.14); }
+.badge--pending { opacity:.95; }
+.badge--ok { opacity:.95; }
+.badge--bad { opacity:.95; }
+.badge--muted { opacity:.75; }
+.mispub__actions{ display:flex; gap:10px; align-items:center; }

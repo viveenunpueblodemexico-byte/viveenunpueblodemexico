@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Container from "../../components/layout/Container/Container";
 import "./vivienda.css";
+import { timeAgo } from "../../utils/date";
 
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
@@ -119,7 +120,11 @@ export default function Vivienda() {
           {filtered.map((it) => (
             <article key={it.id} className="viviendaCard">
               <h3>{it.titulo}</h3>
-              <p className="viviendaMeta">{it.puebloNombre} · {it.estado}</p>
+              <p className="viviendaMeta">
+                {it.puebloNombre} · {it.estado}
+                {it.createdAt ? ` · ${timeAgo(it.createdAt)}` : ""}
+              </p>
+
               <p className="viviendaDesc">{it.descripcion}</p>
               {it.contactoEmail ? <p className="viviendaContact">Contacto: {it.contactoEmail}</p> : null}
               {it.puebloSlug ? <Link className="btn" to={`/pueblo/${it.puebloSlug}`}>Ver pueblo</Link> : null}

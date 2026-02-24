@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { getPuebloBySlug } from "../../services/pueblos";
 import { getOfertasActivasByPuebloId } from "../../services/ofertas";import { setPageSEO, buildAbsoluteUrl, clearManagedSEO } from "../../utils/seo";
+import { timeAgo } from "../../utils/date";
 
 export default function PuebloDetalle() {
   const { slug } = useParams();
@@ -332,6 +333,11 @@ export default function PuebloDetalle() {
                 }}
               >
                 <div style={{ fontWeight: 700, marginBottom: 6 }}>{o.titulo}</div>
+
+                <div style={{ fontSize: 13, opacity: 0.8, marginBottom: 6 }}>
+                  {o.createdAt ? timeAgo(o.createdAt) : ""}
+                </div>
+
 
                 {o.descripcion ? (
                   <div style={{ opacity: 0.9, lineHeight: 1.45 }}>{o.descripcion}</div>

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Container from "../../components/layout/Container/Container";
 import "./trabajo.css";
+import { timeAgo } from "../../utils/date";
 
 // ✅ auth + allowlist (solo para mostrar el botón Admin si aplica)
 import { onAuthStateChanged } from "firebase/auth";
@@ -155,7 +156,9 @@ export default function Trabajo() {
                 <div style={{ fontWeight: 800 }}>{it.titulo}</div>
                 <div style={{ opacity: 0.85, fontSize: 14 }}>
                   {it.puebloNombre || "—"} · {it.estado || "—"}
+                  {it.createdAt ? ` · ${timeAgo(it.createdAt)}` : ""}
                 </div>
+
 
                 {it.descripcion ? (
                   <p style={{ marginTop: 10, whiteSpace: "pre-wrap" }}>{it.descripcion}</p>

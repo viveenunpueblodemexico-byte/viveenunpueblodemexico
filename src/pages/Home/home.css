@@ -194,3 +194,32 @@
 .home__carousel::-webkit-scrollbar{ height: 10px; }
 .home__carousel::-webkit-scrollbar-thumb{ border-radius: 999px; }
 
+.home__authCta {
+  margin: 18px 0 8px;
+}
+
+.home__authCard {
+  border: 1px solid rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.55);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+}
+
+.home__authTitle {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.home__authSub {
+  margin: 0 0 14px;
+  color: rgba(0,0,0,0.7);
+  line-height: 1.35;
+}
+
+.home__authActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}

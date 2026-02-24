@@ -11,7 +11,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { db } from "../firebase";
+import { auth, db } from "../firebase";
 import { slugify } from "../utils/slug";
 
 
@@ -27,10 +27,13 @@ export async function crearOfertaPueblo({
   titulo,
   descripcion,
   contactoEmail = "",
+  userId = "",
+  userEmail = "",
 }) {
   if (!puebloId) throw new Error("puebloId requerido");
   if (!titulo?.trim()) throw new Error("Título requerido");
   if (!descripcion?.trim()) throw new Error("Descripción requerida");
+  if (!userId) throw new Error("Debes iniciar sesión para publicar.");
 
   const ref = collection(db, "pueblos", puebloId, "ofertas");
 
@@ -42,6 +45,9 @@ export async function crearOfertaPueblo({
     titulo: titulo.trim(),
     descripcion: descripcion.trim(),
     contactoEmail: contactoEmail.trim(),
+
+    userId: String(userId),
+    userEmail: (userEmail || "").trim(),
 
     puebloId,
     puebloNombre: (puebloNombre || "").trim(),
@@ -72,6 +78,9 @@ function normalizeOfertaDoc(d, id) {
     descripcion: d.descripcion || "",
     contactoEmail: d.contactoEmail || "",
 
+    userId: d.userId || "",
+    userEmail: d.userEmail || "",
+
     puebloId: d.puebloId || "",
     puebloNombre: d.puebloNombre || "",
     puebloSlug: d.puebloSlug || "",
@@ -81,6 +90,22 @@ function normalizeOfertaDoc(d, id) {
 
     createdAt: d.createdAt || null,
     updatedAt: d.updatedAt || null,
+    
+    moderatedAt: d.moderatedAt || null,
+    moderatedBy: d.moderatedBy || null,
+    moderatedAction: d.moderatedAction || null,
+    };
+  }
+
+function getAdminUid() {
+  return auth?.currentUser?.uid || null;
+}
+
+function moderationMeta(action) {
+  return {
+    moderatedAt: serverTimestamp(),
+    moderatedBy: getAdminUid(),
+    moderatedAction: action,
   };
 }
 
@@ -167,6 +192,7 @@ export async function aprobarOferta({ puebloId, ofertaId }) {
     activo: true,
     status: "aprobada",
     updatedAt: serverTimestamp(),
+    ...moderationMeta("aprobar"),
   });
 }
 
@@ -178,6 +204,7 @@ export async function rechazarOferta({ puebloId, ofertaId }) {
     activo: false,
     status: "rechazada",
     updatedAt: serverTimestamp(),
+    ...moderationMeta("rechazar"),
   });
 }
 
@@ -225,6 +252,7 @@ export async function marcarOfertaTomada({ puebloId, ofertaId }) {
     status: "tomada",
     tomadaAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
+    ...moderationMeta("tomar"),
   });
 }
 
@@ -238,6 +266,37 @@ export async function reactivarOferta({ puebloId, ofertaId }) {
   await updateDoc(ref, {
     activo: true,
     status: "aprobada",
+    updatedAt: serverTimestamp(),
+    ...moderationMeta("reactivar"),
+  });
+}
+// ============================
+// Usuario: mis publicaciones (todas, incluyendo pendientes)
+// ============================
+export async function getMisOfertas({ userId, max = 200 } = {}) {
+  if (!userId) throw new Error("userId requerido");
+
+  const q = query(
+    collectionGroup(db, "ofertas"),
+    where("userId", "==", userId),
+    orderBy("createdAt", "desc"),
+    limit(max)
+  );
+
+  const snap = await getDocs(q);
+  return snap.docs.map((docu) => normalizeOfertaDoc(docu.data() || {}, docu.id));
+}
+
+export async function editarOfertaUsuario({ puebloId, ofertaId, titulo, descripcion, contactoEmail }) {
+  if (!puebloId || !ofertaId) throw new Error("puebloId y ofertaId requeridos");
+  if (!auth?.currentUser?.uid) throw new Error("Debes iniciar sesión.");
+
+  const ref = doc(db, "pueblos", puebloId, "ofertas", ofertaId);
+
+  await updateDoc(ref, {
+    titulo: (titulo || "").trim(),
+    descripcion: (descripcion || "").trim(),
+    contactoEmail: (contactoEmail || "").trim(),
     updatedAt: serverTimestamp(),
   });
 }

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useAuth } from "../../auth/AuthProvider";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { getPueblosPublicados } from "../../services/pueblos";
 import { crearOfertaPueblo } from "../../services/ofertas";
@@ -13,6 +14,9 @@ import {
 
 export default function TrabajoPublicar() {
   const showDevHints = import.meta.env.DEV; // o VITE_SHOW_DEV_HINTS === 'true'
+
+ const { user, loginWithGoogle } = useAuth();
+  const isLogged = Boolean(user);
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -63,6 +67,7 @@ export default function TrabajoPublicar() {
     setOk("");
 
     try {
+      if (!user) throw new Error("Debes iniciar sesión con Google para publicar.");
       // Anti-spam: honeypot
       if (isLikelyBot(website)) {
         throw new Error("No se pudo publicar. Intenta de nuevo más tarde.");
@@ -80,6 +85,8 @@ export default function TrabajoPublicar() {
       const v = validateOffer({ titulo, descripcion, contactoEmail });
       if (v) throw new Error(v);
 
+      if (!pueblo) throw new Error("Selecciona un pueblo antes de publicar.");
+
       setSaving(true);
 
       await crearOfertaPueblo({
@@ -91,10 +98,12 @@ export default function TrabajoPublicar() {
         titulo: sanitizeText(titulo),
         descripcion: (descripcion || "").trim(),
         contactoEmail: sanitizeText(contactoEmail),
+        userId: user.uid,
+        userEmail: user.email || "",
       });
 
       setLastSubmitNow(cdKey);
-      setOk("¡Listo! Tu oferta quedó registrada (pendiente/inaactiva por defecto).");
+      setOk("¡Listo! Tu oferta quedó registrada (pendiente/inactiva por defecto).");
       // opcional: llevar al detalle del pueblo
       setTimeout(() => {
         navigate(`/pueblo/${pueblo.slug}?back=${encodeURIComponent("/trabajo")}`);
@@ -105,6 +114,8 @@ export default function TrabajoPublicar() {
       setSaving(false);
     }
   }
+
+
 
   return (
   <div className="container publicar">
@@ -120,89 +131,94 @@ export default function TrabajoPublicar() {
     </div>
 
     <div className="publicar__card">
-      <form onSubmit={onSubmit} className="publicar__grid">
-        {/* Honeypot: si un bot lo llena, bloqueamos */}
-        <div className="field full" style={{ display: "none" }} aria-hidden="true">
-          <label>Website</label>
-          <input
-            className="control"
-            value={website}
-            onChange={(e) => setWebsite(e.target.value)}
-            autoComplete="off"
-            tabIndex={-1}
-          />
-        </div>
-        <div className="field full">
-          <label>Pueblo</label>
-          <select
-            className="control"
-            value={puebloId}
-            onChange={(e) => setPuebloId(e.target.value)}
-            disabled={loading || saving}
+      {!isLogged ? (
+        <div className="publicar__loginCard">
+          <p className="publicar__loginTitle">
+            <b>Inicia sesión</b> para publicar.
+          </p>
+          <p className="publicar__loginSub">
+            Solo usamos Google (no guardamos contraseñas). Tus publicaciones quedan pendientes de aprobación.
+          </p>
+
+          <button
+            className="btnPrimary"
+            type="button"
+            onClick={loginWithGoogle}
           >
-            <option value="">Selecciona…</option>
-            {pueblos.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.nombre} — {p.estado}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="field full">
-          <label>Título</label>
-          <input
-            className="control"
-            value={titulo}
-            onChange={(e) => setTitulo(e.target.value)}
-            placeholder="Ej. Se busca barista (medio tiempo)"
-            disabled={saving}
-          />
-        </div>
-
-        <div className="field full">
-          <label>Descripción</label>
-          <textarea
-            className="control"
-            value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
-            placeholder="Requisitos, horario, sueldo aproximado, etc."
-            disabled={saving}
-          />
-        </div>
-
-        <div className="field full">
-          <label>Contacto (email)</label>
-          <input
-            className="control"
-            value={contactoEmail}
-            onChange={(e) => setContactoEmail(e.target.value)}
-            placeholder="correo@ejemplo.com"
-            disabled={saving}
-          />
-        </div>
-
-        {error ? (
-          <div className="alert alert--error full">{error}</div>
-        ) : null}
-
-        {ok ? (
-          <div className="alert alert--ok full">{ok}</div>
-        ) : null}
-
-        <div className="publicar__actions full">
-          <button className="btnPrimary" type="submit" disabled={saving || loading}>
-            {saving ? "Publicando…" : "Publicar"}
+            Iniciar con Google
           </button>
         </div>
+      ) : null}
 
-{showDevHints && (
-        <p className="publicar__note full">
-          Nota: tu UI de detalle del pueblo solo muestra ofertas con <b>activo == true</b>.
-          Las nuevas quedan <b>activo:false</b> y <b>status:'pendiente'</b>.
-        </p>
-        )}
-      </form>
+      <form onSubmit={onSubmit} className="publicar__grid">
+  <div className="field full" style={{ display: "none" }} aria-hidden="true">
+    <label>Website</label>
+    <input
+      className="control"
+      value={website}
+      onChange={(e) => setWebsite(e.target.value)}
+      autoComplete="off"
+      tabIndex={-1}
+      disabled={!isLogged || saving}
+    />
+  </div>
+
+  <div className="field full">
+    <label>Pueblo</label>
+    <select
+      className="control"
+      value={puebloId}
+      onChange={(e) => setPuebloId(e.target.value)}
+      disabled={!isLogged || loading || saving}
+    >
+      <option value="">Selecciona…</option>
+      {pueblos.map((p) => (
+        <option key={p.id} value={p.id}>
+          {p.nombre} — {p.estado}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  <div className="field full">
+    <label>Título</label>
+    <input
+      className="control"
+      value={titulo}
+      onChange={(e) => setTitulo(e.target.value)}
+      placeholder="Ej. Se busca barista (medio tiempo)"
+      disabled={!isLogged || saving}
+    />
+  </div>
+
+  <div className="field full">
+    <label>Descripción</label>
+    <textarea
+      className="control"
+      value={descripcion}
+      onChange={(e) => setDescripcion(e.target.value)}
+      placeholder="Requisitos, horario, sueldo aproximado, etc."
+      disabled={!isLogged || saving}
+    />
+  </div>
+
+  <div className="field full">
+    <label>Contacto (email)</label>
+    <input
+      className="control"
+      value={contactoEmail}
+      onChange={(e) => setContactoEmail(e.target.value)}
+      placeholder="correo@ejemplo.com"
+      disabled={!isLogged || saving}
+    />
+  </div>
+
+  <div className="publicar__actions full">
+    <button className="btnPrimary" type="submit" disabled={!isLogged || saving || loading}>
+      {saving ? "Publicando…" : "Publicar"}
+    </button>
+  </div>
+</form>
     </div>
   </div>
 );
