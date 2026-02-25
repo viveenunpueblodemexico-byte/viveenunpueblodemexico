@@ -14,7 +14,6 @@
 .mispub__meta { margin-top:8px; opacity:.75; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 .mispub__pill { border:1px solid rgba(255,255,255,.14); padding:2px 8px; border-radius:999px; font-size:12px; opacity:.9; }
 .mispub__dot { opacity:.5; }
-
 .mispub__stats{
   display:flex; gap:10px; flex-wrap:wrap;
   margin: 8px 0 16px;
@@ -42,9 +41,118 @@
 .mispub__loading { padding:12px 0; opacity:.85; }
 
 /* Badges (simple) */
-.badge { font-size:12px; padding:2px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.14); }
-.badge--pending { opacity:.95; }
-.badge--ok { opacity:.95; }
-.badge--bad { opacity:.95; }
-.badge--muted { opacity:.75; }
-.mispub__actions{ display:flex; gap:10px; align-items:center; }
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.2px;
+  border:1px solid rgba(0,0,0,.10);
+}
+
+.badge--pending{ background:rgba(255,170,0,.18); color:#7a4b00; }
+.badge--ok{ background:rgba(50,180,110,.18); color:#1f5a3a; }
+.badge--bad{ background:rgba(220,60,60,.16); color:#7a1f1f; }
+.badge--muted{ background:rgba(0,0,0,.06); color:#333; }
+
+/* === Actions === */
+.mispub__actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+}
+
+.mispub__link{
+  font-size:14px;
+  color:#2f5e4e;
+  text-decoration:none;
+  padding:8px 10px;
+  border-radius:10px;
+}
+
+.mispub__link:hover{
+  background:rgba(47,94,78,.08);
+  text-decoration:underline;
+}
+
+/* Botón base */
+.btn{
+  border:1px solid rgba(0,0,0,.12);
+  background:#fff;
+  padding:9px 14px;
+  border-radius:999px;
+  font-weight:600;
+  font-size:14px;
+  cursor:pointer;
+  transition:transform .06s ease, box-shadow .12s ease, background .12s ease;
+}
+
+.btn:hover{
+  background:rgba(0,0,0,.03);
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+}
+
+.btn:active{ transform:translateY(1px); }
+
+.btn:focus{
+  outline:3px solid rgba(47,94,78,.18);
+  outline-offset:2px;
+}
+
+/* Editar = primario suave */
+.btn--primary{
+  border-color: rgba(47,94,78,.35);
+  background: rgba(47,94,78,.10);
+  color:#234a3d;
+}
+
+.btn--primary:hover{
+  background: rgba(47,94,78,.16);
+}
+
+/* Eliminar = danger */
+.btn--danger{
+  border-color: rgba(200,60,60,.35);
+  background: rgba(200,60,60,.10);
+  color:#7a1f1f;
+}
+
+.btn--danger:hover{
+  background: rgba(200,60,60,.16);
+}
+.mispub__card{
+  background:#fff;
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:16px;
+  padding:18px 18px;
+  box-shadow:0 10px 30px rgba(0,0,0,.06);
+}
+
+.mispub__row{
+  gap:10px;
+}
+
+.mispub__footer{
+  margin-top:14px;
+  padding-top:14px;
+  border-top:1px dashed rgba(0,0,0,.10);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  flex-wrap:wrap;
+}
+.mispub__hint{
+  font-size:12px;
+  color:rgba(0,0,0,.55);
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(0,0,0,.04);
+  border:1px solid rgba(0,0,0,.08);
+  white-space:nowrap;
+}

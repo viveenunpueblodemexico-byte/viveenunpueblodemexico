@@ -10,6 +10,7 @@ import {
   getOfertasPorStatus,
   marcarOfertaTomada,
   reactivarOferta,
+  eliminarOfertaAdmin,
 } from "../../services/ofertas";
 
 export default function AdminOfertas() {
@@ -146,6 +147,21 @@ async function onReactivate(it) {
   }
 }
 
+async function onDelete(it) {
+  const ok = window.confirm("¿Eliminar esta oferta definitivamente? Esta acción no se puede deshacer.");
+  if (!ok) return;
+
+  setBusyId(it.id);
+  try {
+    await eliminarOfertaAdmin({ puebloId: it.puebloId, ofertaId: it.id });
+    setItems((prev) => prev.filter((x) => x.id !== it.id));
+    await loadPendientesCount();
+  } catch (e) {
+    alert(e?.message || "No se pudo eliminar.");
+  } finally {
+    setBusyId("");
+  }
+}
 
   const empty = useMemo(() => !loading && count === 0, [loading, count]);
 
@@ -268,6 +284,13 @@ async function onReactivate(it) {
                     </button>
                   ) : null}
 
+                  <button
+                    className="btn btn--danger"
+                    onClick={() => onDelete(it)}
+                    disabled={busyId === it.id}
+                  >
+                    {busyId === it.id ? "…" : "Eliminar"}
+                  </button>
                 </div>
               </div>
 

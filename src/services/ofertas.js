@@ -9,6 +9,7 @@ import {
   query,
   serverTimestamp,
   updateDoc,
+  deleteDoc,
   where,
 } from "firebase/firestore";
 import { auth, db } from "../firebase";
@@ -299,4 +300,16 @@ export async function editarOfertaUsuario({ puebloId, ofertaId, titulo, descripc
     contactoEmail: (contactoEmail || "").trim(),
     updatedAt: serverTimestamp(),
   });
+}
+export async function eliminarOfertaUsuario({ puebloId, ofertaId }) {
+  if (!puebloId || !ofertaId) throw new Error("puebloId y ofertaId requeridos");
+  if (!auth?.currentUser?.uid) throw new Error("Debes iniciar sesión.");
+
+  const ref = doc(db, "pueblos", puebloId, "ofertas", ofertaId);
+  await deleteDoc(ref);
+}
+export async function eliminarOfertaAdmin({ puebloId, ofertaId }) {
+  if (!puebloId || !ofertaId) throw new Error("puebloId y ofertaId requeridos");
+  const ref = doc(db, "pueblos", puebloId, "ofertas", ofertaId);
+  await deleteDoc(ref);
 }

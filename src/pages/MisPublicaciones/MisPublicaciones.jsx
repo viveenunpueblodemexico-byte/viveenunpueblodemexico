@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthProvider";
 import RequireUser from "../../components/auth/RequireUser";
-import { getMisOfertas, editarOfertaUsuario } from "../../services/ofertas";
+import { getMisOfertas, editarOfertaUsuario, eliminarOfertaUsuario } from "../../services/ofertas";
 import "./MisPublicaciones.css";
 
 function badge(status) {
@@ -97,6 +97,22 @@ function MisPublicacionesInner() {
 }
 
 
+async function onDelete(it) {
+  try {
+    const ok = window.confirm("¿Eliminar esta publicación? Esta acción no se puede deshacer.");
+    if (!ok) return;
+
+    await eliminarOfertaUsuario({ puebloId: it.puebloId, ofertaId: it.id });
+
+    // refrescar lista
+    const data = await getMisOfertas({ userId: user.uid, max: 200 });
+    setItems(data);
+  } catch (e) {
+    alert(e?.message || "No se pudo eliminar.");
+  }
+}
+
+
   const filtered = useMemo(() => {
     if (tipo === "todas") return items;
     return items.filter((x) => x.tipo === tipo);
@@ -163,7 +179,10 @@ function MisPublicacionesInner() {
         ) : null}
 
 <div className="mispub__list">
-  {filtered.map((it) => (
+  {filtered.map((it) => {
+  const canUserEdit = it.status === "pendiente" && it.activo === false;
+
+  return (
     <div key={`${it.puebloId}-${it.id}`} className="mispub__card">
       <div className="mispub__row">
         <div className="mispub__titleRow">
@@ -194,15 +213,28 @@ function MisPublicacionesInner() {
             Ver pueblo
           </Link>
 
-          {it.status === "pendiente" ? (
-            <button className="btn" type="button" onClick={() => onEdit(it)}>
-              Editar
-            </button>
-          ) : null}
+          {canUserEdit ? (
+            <>
+              <button className="btn btn--primary" type="button" onClick={() => onEdit(it)}>
+                Editar
+              </button>
+              <button className="btn btn--danger" type="button" onClick={() => onDelete(it)}>
+                Eliminar
+              </button>
+            </>
+          ) : (
+             <span className="mispub__hint">
+              {it.status === "aprobada" ? "Aprobada: ya no se puede editar." :
+              it.status === "rechazada" ? "Rechazada: ya no se puede editar." :
+              it.status === "tomada" ? "Tomada: ya no se puede editar." :
+              "Esta publicación ya no es editable."}
+            </span>
+          )}
         </div>
       </div>
     </div>
-  ))}
+  );
+})}
 </div>
      
     </div>
