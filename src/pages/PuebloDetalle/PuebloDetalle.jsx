@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
+import ThreadList from "../../components/foro/ThreadList"; 
 import { getPuebloBySlug } from "../../services/pueblos";
 import { getOfertasActivasByPuebloId } from "../../services/ofertas";import { setPageSEO, buildAbsoluteUrl, clearManagedSEO } from "../../utils/seo";
 import { timeAgo } from "../../utils/date";
@@ -389,18 +390,32 @@ export default function PuebloDetalle() {
       </div>
 
       {/* COMUNIDAD / FORO */}
-      <div
-        style={{
-          marginTop: 28,
-          paddingTop: 16,
-          borderTop: "1px solid rgba(255,255,255,0.08)",
-        }}
-      >
-        <h2 style={{ margin: 0, fontSize: 18 }}>Comunidad</h2>
-        <p style={{ opacity: 0.8, marginTop: 8 }}>
-          (Próximamente: preguntas, experiencias y recomendaciones por pueblo)
-        </p>
-      </div>
+        <div
+          style={{
+            marginTop: 28,
+            paddingTop: 16,
+            borderTop: "1px solid rgba(255,255,255,0.08)",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+            <h2 style={{ margin: 0, fontSize: 18 }}>Comunidad</h2>
+
+            <Link
+              to={`/pueblo/${slug}/foro`}
+              style={{ fontSize: 13, opacity: 0.85, textDecoration: "underline" }}
+            >
+              Ver todo →
+            </Link>
+          </div>
+
+          <div style={{ marginTop: 10 }}>
+            {pueblo?.id ? (
+              <ThreadList puebloId={pueblo.id} puebloSlug={slug} mode="preview" limitCount={5} />
+            ) : (
+              <div className="muted">Cargando comunidad…</div>
+            )}
+          </div>
+        </div>
 
     </div>
   );
