@@ -9,6 +9,9 @@ import Estado from "../pages/Estado/Estado";
 import Pueblos from "../pages/Pueblos/Pueblos";
 import PuebloDetalle from "../pages/PuebloDetalle/PuebloDetalle";
 
+import PuebloForo from "../pages/PuebloForo/PuebloForo";
+import ThreadDetalle from "../pages/PuebloForo/ThreadDetalle";
+
 import AdminLogin from "../pages/Admin/AdminLogin";
 import AdminOfertas from "../pages/Admin/AdminOfertas";
 import RequireAdmin from "../components/auth/RequireAdmin";
@@ -38,6 +41,9 @@ export default function App() {
 
         <Route path="/pueblos" element={<Pueblos />} />
         <Route path="/pueblo/:slug" element={<PuebloDetalle />} />
+
+        <Route path="/pueblo/:slug/foro" element={<PuebloForo />} />
+        <Route path="/pueblo/:slug/foro/:threadId" element={<ThreadDetalle />} />
 
         <Route path="/trabajo" element={<Trabajo />} />
         <Route path="/vivienda" element={<Vivienda />} />

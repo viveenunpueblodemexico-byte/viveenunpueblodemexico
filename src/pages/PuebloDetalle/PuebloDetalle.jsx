@@ -397,16 +397,12 @@ export default function PuebloDetalle() {
             borderTop: "1px solid rgba(255,255,255,0.08)",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-            <h2 style={{ margin: 0, fontSize: 18 }}>Comunidad</h2>
-
-            <Link
-              to={`/pueblo/${slug}/foro`}
-              style={{ fontSize: 13, opacity: 0.85, textDecoration: "underline" }}
-            >
-              Ver todo →
-            </Link>
-          </div>
+          <div style={{ maxWidth: 920, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+          <h2 style={{ margin: 0, fontSize: 18 }}>Comunidad</h2>
+          <Link to={`/pueblo/${slug}/foro`} style={{ fontSize: 13, opacity: 0.85, textDecoration: "underline" }}>
+            Ver todo →
+          </Link>
+        </div>
 
           <div style={{ marginTop: 10 }}>
             {pueblo?.id ? (

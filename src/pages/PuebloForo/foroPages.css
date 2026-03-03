@@ -1,0 +1,51 @@
+/* Layout base */
+.foroPage{
+  padding: 24px;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+/* Header responsive */
+.foroHeader{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.foroHeaderActions{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Cards */
+.foroCard{
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.35);
+}
+
+/* Comentarios: header + acciones */
+.commentHeader{
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+.commentActions{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Mobile: más compacto y botones fluidos */
+@media (max-width: 520px){
+  .foroPage{ padding: 16px; }
+  .foroHeaderActions{ width: 100%; }
+  .foroHeaderActions .btn{ flex: 1; } /* los botones se reparten */
+}
