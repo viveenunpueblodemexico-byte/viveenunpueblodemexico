@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import ThreadList from "../../components/foro/ThreadList";
 import "./foroPages.css";
 // 🔁 Ajusta estos imports según tu proyecto:
@@ -102,11 +103,14 @@ export default function PuebloForo() {
         userName: user.displayName || "",
         });
 
+
       // reset
       setTitle("");
       setBody("");
       setCategory("general");
       setShowForm(false);
+
+      toast.success("Pregunta publicada");
 
       // ✅ Redirigir al hilo recién creado
         navigate(`/pueblo/${slug}/foro/${docRef.id}`);

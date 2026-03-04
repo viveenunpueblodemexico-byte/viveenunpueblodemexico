@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import "./foroPages.css";
+import toast from "react-hot-toast";
 import { onAuthStateChanged } from "firebase/auth";
 import { Link, useParams } from "react-router-dom";
 import { db, auth } from "../../firebase";
@@ -137,8 +138,10 @@ export default function ThreadDetalle() {
         // no pongas editedAt al crear
       });
       setText("");
+      toast.success("Comentario publicado");
     } catch (e) {
       console.error(e);
+      toast.error("No se pudo publicar el comentario");
       setErr("No se pudo enviar el comentario.");
     } finally {
       setSending(false);
@@ -164,6 +167,7 @@ export default function ThreadDetalle() {
         createdAt: serverTimestamp(),
         userId: user.uid,
       });
+      toast.success("Reporte enviado");
       setReportOpen(false);
       setDetails("");
       setReason("spam");
@@ -198,6 +202,7 @@ async function saveEdit() {
       isEdited: true,
       editedAt: serverTimestamp(),
     });
+    toast.success("Comentario actualizado");
     cancelEdit();
   } catch (e) {
     console.error(e);
@@ -217,6 +222,7 @@ async function removeComment(commentId) {
     setBusyId(commentId);
     const ref = doc(db, "pueblos", pueblo.id, "threads", threadId, "comments", commentId);
     await deleteDoc(ref);
+    toast.success("Comentario eliminado");
   } catch (e) {
     console.error(e);
     setErr("No se pudo eliminar el comentario.");
@@ -460,7 +466,7 @@ async function removeComment(commentId) {
           }}
           maxLength={1500}
         />
-        <div className="foroHeaderActions" style={{ justifyContent: "flex-end" }}>
+        <div className="commentFormActions">
           <button className="btn" disabled={sending || text.trim().length < 2}>
             {sending ? "Enviando…" : "Comentar"}
           </button>

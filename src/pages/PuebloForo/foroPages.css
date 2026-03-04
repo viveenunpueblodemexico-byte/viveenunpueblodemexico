@@ -37,15 +37,39 @@
   align-items: baseline;
   flex-wrap: wrap;
 }
+
 .commentActions{
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-/* Mobile: más compacto y botones fluidos */
+/* Contenedor del form abajo (textarea + botón) */
+.commentFormActions{
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Mobile */
 @media (max-width: 520px){
-  .foroPage{ padding: 16px; }
+  .foroPage{ padding: 14px; }
+
   .foroHeaderActions{ width: 100%; }
-  .foroHeaderActions .btn{ flex: 1; } /* los botones se reparten */
+  .foroHeaderActions .btn{ flex: 0; }
+
+  /* acciones del comentario en móvil */
+  .commentActions{ width: 100%; }
+  .commentActions .btn{
+    flex: 1;
+    min-width: 120px;
+  }
+
+  /* botón Comentar en móvil */
+  .commentFormActions{
+    width: 100%;
+    justify-content: stretch;
+  }
+  .commentFormActions .btn{ flex: 1; }
 }

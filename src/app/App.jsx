@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
+import { Toaster } from "react-hot-toast";
 import SiteHeader from "../components/layout/SiteHeader/SiteHeader";
 import SiteFooter from "../components/layout/SiteFooter/SiteFooter";
 
@@ -15,6 +15,7 @@ import ThreadDetalle from "../pages/PuebloForo/ThreadDetalle";
 import AdminLogin from "../pages/Admin/AdminLogin";
 import AdminOfertas from "../pages/Admin/AdminOfertas";
 import RequireAdmin from "../components/auth/RequireAdmin";
+import AdminForo from "../pages/Admin/AdminForo";
 
 import Trabajo from "../pages/Trabajo/Trabajo";
 import TrabajoPublicar from "../pages/Trabajo/TrabajoPublicar";
@@ -31,6 +32,7 @@ export default function App() {
     <BrowserRouter>
     <div className="appShell">
       <SiteHeader />
+      <Toaster position="top-center" />
 
        <main className="appMain">
       <Routes>
@@ -69,6 +71,14 @@ export default function App() {
           element={
             <RequireAdmin>
               <AdminOfertas />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/admin/foro"
+          element={
+            <RequireAdmin>
+              <AdminForo />
             </RequireAdmin>
           }
         />
