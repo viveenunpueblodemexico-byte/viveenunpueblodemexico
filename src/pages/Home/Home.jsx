@@ -10,7 +10,7 @@ import { useAuth } from "../../auth/AuthProvider";
 import "./home.css";
 
 export default function Home() {
-  const { user, loginWithGoogle, logout } = useAuth(); 
+  const { user, loginWithGoogle, logout, isAdmin } = useAuth();
 
   const [pueblos, setPueblos] = useState([]);
   const [error, setError] = useState("");
@@ -82,6 +82,13 @@ export default function Home() {
                 <Link className="btnPrimary" to="/mis-publicaciones">
                   Mis publicaciones
                 </Link>
+
+                {isAdmin ? (
+                  <Link className="btn" to="/admin">
+                    Panel admin
+                  </Link>
+                ) : null}
+                
                 <button className="btn" type="button" onClick={logout}>
                   Cerrar sesión
                 </button>

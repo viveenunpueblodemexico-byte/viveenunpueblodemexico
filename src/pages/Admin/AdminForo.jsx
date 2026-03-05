@@ -40,12 +40,19 @@ export default function AdminForo() {
     return query(ref, ...base);
   }, [onlyOpen, reasonFilter]);
 
-  const threadsQuery = useMemo(() => {
-    // Lista global de threads (últimos 50 visibles/ocultos)
-    // Si quieres filtrar solo visibles: where("status","==","visible")
-    const ref = collectionGroup(db, "threads");
-    return query(ref, where("status","==","visible"), orderBy("createdAt", "desc"), limit(50));
-  }, []);
+    const threadsQuery = useMemo(() => {
+      const ref = collectionGroup(db, "threads");
+
+      // Forzamos a usar índice que ya tienes (status + createdAt)
+      // y seguimos trayendo visibles + ocultos (o sea, todos los válidos del foro).
+      return query(
+        ref,
+        where("status", "in", ["visible", "oculto"]),
+        orderBy("createdAt", "desc"),
+        limit(50)
+      );
+    }, []);
+
 
   async function loadReports() {
     setErr("");
@@ -134,26 +141,10 @@ export default function AdminForo() {
   }
 
   return (
-    <div style={{ padding: 24, maxWidth: 980, margin: "0 auto" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
         <div>
-          <h2 style={{ margin: 0 }}>Admin — Foro</h2>
-          <div className="muted" style={{ marginTop: 6 }}>
-            Moderación de hilos y reportes.
-          </div>
-        </div>
-
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-          <button className="btn btn--ghost" onClick={() => setTab("reportes")} disabled={tab === "reportes"}>
-            Reportes
-          </button>
-          <button className="btn btn--ghost" onClick={() => setTab("threads")} disabled={tab === "threads"}>
-            Threads
-          </button>
-          <Link className="btn btn--ghost" to="/admin/ofertas">
-            Admin Ofertas →
-          </Link>
-        </div>
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+        <button className="btn btn--ghost" onClick={() => setTab("reportes")} disabled={tab === "reportes"}>Reportes</button>
+        <button className="btn btn--ghost" onClick={() => setTab("threads")} disabled={tab === "threads"}>Threads</button>
       </div>
 
       {tab === "reportes" ? (
@@ -247,7 +238,10 @@ export default function AdminForo() {
         <div style={{ marginTop: 14, display: "grid", gap: 10 }}>
           {threads.length ? (
             threads.map((t) => {
-              const puebloId = t.puebloId || t.puebloSlug; // por si guardas slug
+              // Para construir la URL de "Ver", necesitamos el SLUG (la ruta usa /pueblo/:slug/...)
+              // Mantén ambos por si acaso:
+              const puebloId = t.puebloId;
+              const puebloSlug = t.puebloSlug;
               const status = t.status || "visible";
 
               return (
@@ -256,12 +250,12 @@ export default function AdminForo() {
                     <div>
                       <div style={{ fontWeight: 700 }}>{t.title || "—"}</div>
                       <div className="muted" style={{ marginTop: 4, fontSize: 13 }}>
-                        {t.category || "general"} · {puebloId || "—"} · {status}
+                        {t.category || "general"} · {puebloSlug || puebloId || "—"} · {status}
                       </div>
                     </div>
 
                     <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                      <Link className="btn btn--ghost" to={`/pueblo/${puebloId}/foro/${t.id}`}>
+                      <Link className="btn btn--ghost" to={`/pueblo/${puebloSlug || puebloId}/foro/${t.id}`}>
                         Ver
                       </Link>
                       <button className="btn" onClick={() => toggleThread(puebloId, t.id, status)}>

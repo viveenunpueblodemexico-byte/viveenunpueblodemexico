@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
+import { isAdminEmail } from "./admin";
 
 const AuthCtx = createContext(null);
 
@@ -20,6 +21,7 @@ export function AuthProvider({ children }) {
     () => ({
       user,
       loading,
+      isAdmin: isAdminEmail(user?.email),
       loginWithGoogle: () => signInWithPopup(auth, googleProvider),
       logout: () => signOut(auth),
     }),

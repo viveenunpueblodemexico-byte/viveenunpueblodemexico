@@ -11,6 +11,8 @@ import {
   setLastSubmitNow,
   validateOffer,
 } from "../../utils/antiSpam";
+import { db } from "../../firebase";
+import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 
 export default function TrabajoPublicar() {
   const showDevHints = import.meta.env.DEV; // o VITE_SHOW_DEV_HINTS === 'true'
@@ -22,6 +24,12 @@ export default function TrabajoPublicar() {
   const [searchParams] = useSearchParams();
 
   const preselectSlug = searchParams.get("puebloSlug") || ""; // opcional
+  const edit = searchParams.get("edit") === "1";
+  const editPuebloId = searchParams.get("puebloId") || "";
+  const editOfertaId = searchParams.get("ofertaId") || "";
+  const isEditMode = edit && Boolean(editPuebloId) && Boolean(editOfertaId);
+
+  
   const [pueblos, setPueblos] = useState([]);
   const [puebloId, setPuebloId] = useState("");
 
@@ -34,6 +42,7 @@ export default function TrabajoPublicar() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [ok, setOk] = useState("");
+  const [editLoaded, setEditLoaded] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -43,7 +52,10 @@ export default function TrabajoPublicar() {
         const data = await getPueblosPublicados({ max: 200 });
         setPueblos(data);
 
-        if (preselectSlug) {
+      // Si venimos en modo edición, fijar puebloId desde query param
+        if (isEditMode) {
+          setPuebloId(editPuebloId);
+        } else if (preselectSlug) {
           const found = data.find((p) => p.slug === preselectSlug);
           if (found) setPuebloId(found.id);
         }
@@ -54,12 +66,44 @@ export default function TrabajoPublicar() {
       }
     }
     load();
-  }, [preselectSlug]);
+  }, [preselectSlug, isEditMode, editPuebloId]);
 
   const pueblo = useMemo(
     () => pueblos.find((p) => p.id === puebloId) || null,
     [pueblos, puebloId]
   );
+
+  // Prefill en modo edición
+  useEffect(() => {
+    async function loadEdit() {
+      if (!isEditMode) return;
+      if (!user) return;
+      if (!puebloId) return;
+      if (editLoaded) return;
+
+      setError("");
+      try {
+        const ref = doc(db, "pueblos", editPuebloId, "ofertas", editOfertaId);
+        const snap = await getDoc(ref);
+        if (!snap.exists()) throw new Error("No se encontró la publicación a editar.");
+
+        const data = snap.data() || {};
+        if (data.tipo && data.tipo !== "trabajo") {
+          throw new Error("Esta publicación no corresponde a 'trabajo'.");
+        }
+
+        setTitulo(data.titulo || "");
+        setDescripcion(data.descripcion || "");
+        setContactoEmail(data.contactoEmail || "");
+        setOk("Editando tu oferta (puedes guardar cambios).");
+        setEditLoaded(true);
+      } catch (e) {
+        setError(e?.message || "No se pudo cargar la publicación para editar.");
+      }
+    }
+    loadEdit();
+  }, [isEditMode, user, puebloId, editLoaded, editPuebloId, editOfertaId]);
+
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -73,12 +117,14 @@ export default function TrabajoPublicar() {
         throw new Error("No se pudo publicar. Intenta de nuevo más tarde.");
       }
 
-      // Anti-spam: cooldown (60s)
+    // Anti-spam: cooldown (solo para CREAR, no para editar)
       const cdKey = "vupm:last_submit_trabajo";
-      const remaining = getCooldownRemaining(cdKey);
-      if (remaining > 0) {
-        const secs = Math.ceil(remaining / 1000);
-        throw new Error(`Espera ${secs}s antes de publicar otra oferta.`);
+      if (!isEditMode) {
+        const remaining = getCooldownRemaining(cdKey);
+        if (remaining > 0) {
+          const secs = Math.ceil(remaining / 1000);
+          throw new Error(`Espera ${secs}s antes de publicar otra oferta.`);
+        }
       }
 
       // Validación y sanitizado
@@ -89,25 +135,37 @@ export default function TrabajoPublicar() {
 
       setSaving(true);
 
-      await crearOfertaPueblo({
-        puebloId: pueblo.id,
-        puebloNombre: pueblo.nombre,
-        puebloSlug: pueblo.slug,
-        estado: pueblo.estado,
-        tipo: "trabajo",
-        titulo: sanitizeText(titulo),
-        descripcion: (descripcion || "").trim(),
-        contactoEmail: sanitizeText(contactoEmail),
-        userId: user.uid,
-        userEmail: user.email || "",
-      });
-
-      setLastSubmitNow(cdKey);
-      setOk("¡Listo! Tu oferta quedó registrada (pendiente/inactiva por defecto).");
-      // opcional: llevar al detalle del pueblo
-      setTimeout(() => {
-        navigate(`/pueblo/${pueblo.slug}?back=${encodeURIComponent("/trabajo")}`);
-      }, 600);
+      if (isEditMode) {
+        const ref = doc(db, "pueblos", editPuebloId, "ofertas", editOfertaId);
+        await updateDoc(ref, {
+          titulo: sanitizeText(titulo),
+          descripcion: (descripcion || "").trim(),
+          contactoEmail: sanitizeText(contactoEmail),
+          updatedAt: serverTimestamp(),
+          isEdited: true,
+          editedAt: serverTimestamp(),
+        });
+        setOk("✅ Cambios guardados.");
+       setTimeout(() => navigate("/mis-publicaciones"), 600);
+      } else {
+        await crearOfertaPueblo({
+          puebloId: pueblo.id,
+          puebloNombre: pueblo.nombre,
+          puebloSlug: pueblo.slug,
+          estado: pueblo.estado,
+          tipo: "trabajo",
+          titulo: sanitizeText(titulo),
+          descripcion: (descripcion || "").trim(),
+          contactoEmail: sanitizeText(contactoEmail),
+          userId: user.uid,
+          userEmail: user.email || "",
+        });
+        setLastSubmitNow(cdKey);
+        setOk("¡Listo! Tu oferta quedó registrada (pendiente/inactiva por defecto).");
+        setTimeout(() => {
+          navigate(`/pueblo/${pueblo.slug}?back=${encodeURIComponent("/trabajo")}`);
+        }, 600);
+      }
     } catch (e) {
       setError(e?.message || "No se pudo publicar la oferta.");
     } finally {
@@ -169,7 +227,7 @@ export default function TrabajoPublicar() {
       className="control"
       value={puebloId}
       onChange={(e) => setPuebloId(e.target.value)}
-      disabled={!isLogged || loading || saving}
+      disabled={!isLogged || loading || saving || isEditMode}
     >
       <option value="">Selecciona…</option>
       {pueblos.map((p) => (

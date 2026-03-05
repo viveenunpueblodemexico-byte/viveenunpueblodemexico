@@ -5,6 +5,9 @@ import Container from "../../components/layout/Container/Container";
 import { getPueblosPublicados } from "../../services/pueblos";
 import { crearOfertaPueblo } from "../../services/ofertas";
 import "./viviendaPublicar.css";
+import { db } from "../../firebase";
+import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+
 import {
   getCooldownRemaining,
   isLikelyBot,
@@ -23,6 +26,12 @@ export default function ViviendaPublicar() {
   const [searchParams] = useSearchParams();
 
   const preselectSlug = searchParams.get("puebloSlug") || "";
+  const edit = searchParams.get("edit") === "1";
+  const editPuebloId = searchParams.get("puebloId") || "";
+  const editOfertaId = searchParams.get("ofertaId") || "";
+  const isEditMode = edit && Boolean(editPuebloId) && Boolean(editOfertaId);
+
+
   const [pueblos, setPueblos] = useState([]);
   const [puebloId, setPuebloId] = useState("");
 
@@ -35,6 +44,7 @@ export default function ViviendaPublicar() {
   const [saving, setSaving] = useState(false);
   const [ok, setOk] = useState("");
   const [error, setError] = useState("");
+  const [editLoaded, setEditLoaded] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -57,8 +67,35 @@ export default function ViviendaPublicar() {
   }, [preselectSlug, pueblos]);
 
   useEffect(() => {
-    if (preselectId && !puebloId) setPuebloId(preselectId);
-  }, [preselectId, puebloId]);
+    if (isEditMode && editPuebloId && !puebloId) setPuebloId(editPuebloId);
+    else if (preselectId && !puebloId) setPuebloId(preselectId);
+  }, [preselectId, puebloId, isEditMode, editPuebloId]);
+
+  // Prefill en modo edición
+  useEffect(() => {
+    async function loadEdit() {
+      if (!isEditMode) return;
+      if (!user) return;
+      if (!puebloId) return;
+      if (editLoaded) return;
+      setError("");
+      try {
+        const ref = doc(db, "pueblos", editPuebloId, "ofertas", editOfertaId);
+        const snap = await getDoc(ref);
+        if (!snap.exists()) throw new Error("No se encontró la publicación a editar.");
+        const data = snap.data() || {};
+        if (data.tipo && data.tipo !== "vivienda") throw new Error("Esta publicación no corresponde a 'vivienda'.");
+        setTitulo(data.titulo || "");
+        setDescripcion(data.descripcion || "");
+        setContactoEmail(data.contactoEmail || "");
+        setOk("Editando tu publicación (puedes guardar cambios).");
+        setEditLoaded(true);
+      } catch (e) {
+        setError(e?.message || "No se pudo cargar la publicación para editar.");
+      }
+    }
+    loadEdit();
+  }, [isEditMode, user, puebloId, editLoaded, editPuebloId, editOfertaId]);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -74,10 +111,12 @@ export default function ViviendaPublicar() {
       if (isLikelyBot(website)) throw new Error("No se pudo publicar. Intenta de nuevo más tarde.");
 
       const cdKey = "vupm:last_submit_vivienda";
-      const remaining = getCooldownRemaining(cdKey);
-      if (remaining > 0) {
-        const secs = Math.ceil(remaining / 1000);
-        throw new Error(`Espera ${secs}s antes de publicar otra oferta.`);
+      if (!isEditMode) {
+        const remaining = getCooldownRemaining(cdKey);
+        if (remaining > 0) {
+          const secs = Math.ceil(remaining / 1000);
+          throw new Error(`Espera ${secs}s antes de publicar otra oferta.`);
+        }
       }
 
       const v = validateOffer({ titulo, descripcion, contactoEmail });
@@ -86,24 +125,38 @@ export default function ViviendaPublicar() {
       if (!pueblo) throw new Error("Selecciona un pueblo antes de publicar.");
 
 
-      await crearOfertaPueblo({
-        puebloId,
-        puebloNombre: pueblo.nombre,
-        puebloSlug: pueblo.slug,
-        estado: pueblo.estado,
-        tipo: "vivienda",
-        titulo: sanitizeText(titulo),
-        descripcion: (descripcion || "").trim(),
-        contactoEmail: sanitizeText(contactoEmail),
-        userId: user.uid,
-        userEmail: user.email || "",
-      });
-      setLastSubmitNow(cdKey);
-      setOk("¡Listo! Tu publicación quedó registrada para revisión.");
-      setTitulo("");
-      setDescripcion("");
-      setContactoEmail("");
-      setTimeout(() => navigate("/vivienda"), 800);
+      if (isEditMode) {
+        const ref = doc(db, "pueblos", editPuebloId, "ofertas", editOfertaId);
+        await updateDoc(ref, {
+          titulo: sanitizeText(titulo),
+          descripcion: (descripcion || "").trim(),
+          contactoEmail: sanitizeText(contactoEmail),
+          updatedAt: serverTimestamp(),
+          isEdited: true,
+          editedAt: serverTimestamp(),
+        });
+        setOk("✅ Cambios guardados.");
+        setTimeout(() => navigate("/mis-publicaciones"), 600);
+      } else {
+        await crearOfertaPueblo({
+         puebloId,
+          puebloNombre: pueblo.nombre,
+          puebloSlug: pueblo.slug,
+          estado: pueblo.estado,
+          tipo: "vivienda",
+          titulo: sanitizeText(titulo),
+          descripcion: (descripcion || "").trim(),
+          contactoEmail: sanitizeText(contactoEmail),
+          userId: user.uid,
+          userEmail: user.email || "",
+        });
+        setLastSubmitNow(cdKey);
+        setOk("¡Listo! Tu publicación quedó registrada para revisión.");
+        setTitulo("");
+        setDescripcion("");
+        setContactoEmail("");
+        setTimeout(() => navigate("/vivienda"), 800);
+      }
     } catch (e2) {
       setError(e2?.message || "No se pudo publicar.");
     } finally {
@@ -161,7 +214,7 @@ export default function ViviendaPublicar() {
                 value={puebloId}
                 onChange={(e) => setPuebloId(e.target.value)}
                 required
-                disabled={!isLogged || loading || saving}
+                disabled={!isLogged || loading || saving || isEditMode}
               >
                 <option value="">Selecciona…</option>
                 {pueblos.map((p) => (

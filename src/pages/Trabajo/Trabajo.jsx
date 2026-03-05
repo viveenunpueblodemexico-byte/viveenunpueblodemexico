@@ -89,12 +89,7 @@ export default function Trabajo() {
               Publicar oferta
             </Link>
 
-            {/* ✅ Admin SOLO si está logueado con correo permitido */}
-            {adminUI ? (
-              <Link to="/admin/ofertas" className="btn">
-                Admin
-              </Link>
-            ) : null}
+            
           </div>
         </div>
 

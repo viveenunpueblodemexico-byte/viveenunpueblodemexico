@@ -16,6 +16,7 @@ import AdminLogin from "../pages/Admin/AdminLogin";
 import AdminOfertas from "../pages/Admin/AdminOfertas";
 import RequireAdmin from "../components/auth/RequireAdmin";
 import AdminForo from "../pages/Admin/AdminForo";
+import AdminLayout from "../pages/Admin/AdminLayout";
 
 import Trabajo from "../pages/Trabajo/Trabajo";
 import TrabajoPublicar from "../pages/Trabajo/TrabajoPublicar";
@@ -66,22 +67,19 @@ export default function App() {
 
 
         <Route path="/admin/login" element={<AdminLogin />} />
+
         <Route
-          path="/admin/ofertas"
+          path="/admin"
           element={
             <RequireAdmin>
-              <AdminOfertas />
+              <AdminLayout />
             </RequireAdmin>
           }
-        />
-        <Route
-          path="/admin/foro"
-          element={
-            <RequireAdmin>
-              <AdminForo />
-            </RequireAdmin>
-          }
-        />
+        >
+          <Route index element={<AdminOfertas />} />
+          <Route path="ofertas" element={<AdminOfertas />} />
+          <Route path="foro" element={<AdminForo />} />
+        </Route>
 
 
         <Route

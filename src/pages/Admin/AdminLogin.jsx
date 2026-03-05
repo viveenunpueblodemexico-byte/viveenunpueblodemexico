@@ -7,7 +7,7 @@ import Container from "../../components/layout/Container/Container";
 export default function AdminLogin() {
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from || "/admin/ofertas";
+  const from = location.state?.from || "/admin";
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,7 +30,7 @@ export default function AdminLogin() {
       <Container>
         <h1 style={{ marginBottom: 8 }}>Admin</h1>
         <p style={{ marginBottom: 16 }}>
-          Inicia sesión con Google para moderar ofertas.
+          Inicia sesión con Google para moderar ofertas, y foro.
         </p>
 
         {error ? (

@@ -69,32 +69,15 @@ function MisPublicacionesInner() {
     if (user?.uid) load();
     }, [user?.uid]);
 
-    async function onEdit(it) {
-  try {
-    const nuevoTitulo = window.prompt("Editar título:", it.titulo || "");
-    if (nuevoTitulo === null) return;
-
-    const nuevaDesc = window.prompt("Editar descripción:", it.descripcion || "");
-    if (nuevaDesc === null) return;
-
-    const nuevoEmail = window.prompt("Editar email de contacto:", it.contactoEmail || "");
-    if (nuevoEmail === null) return;
-
-    await editarOfertaUsuario({
-      puebloId: it.puebloId,
-      ofertaId: it.id,
-      titulo: nuevoTitulo,
-      descripcion: nuevaDesc,
-      contactoEmail: nuevoEmail,
-    });
-
-    // refrescar lista
-    const data = await getMisOfertas({ userId: user.uid, max: 200 });
-    setItems(data);
-  } catch (e) {
-    alert(e?.message || "No se pudo editar.");
+  // Editar con UX consistente:
+  // mandamos al formulario de "publicar" con modo edición (query params).
+  function editUrl(it) {
+    const base =
+      it.tipo === "trabajo" ? "/trabajo/publicar" :
+      it.tipo === "vivienda" ? "/vivienda/publicar" :
+      "/traspasos/publicar";
+    return `${base}?edit=1&puebloId=${encodeURIComponent(it.puebloId)}&ofertaId=${encodeURIComponent(it.id)}`;
   }
-}
 
 
 async function onDelete(it) {
@@ -215,9 +198,7 @@ async function onDelete(it) {
 
           {canUserEdit ? (
             <>
-              <button className="btn btn--primary" type="button" onClick={() => onEdit(it)}>
-                Editar
-              </button>
+              <Link className="btn btn--primary" to={editUrl(it)}>Editar</Link>
               <button className="btn btn--danger" type="button" onClick={() => onDelete(it)}>
                 Eliminar
               </button>

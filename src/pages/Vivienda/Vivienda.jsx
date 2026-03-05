@@ -71,7 +71,7 @@ export default function Vivienda() {
             <Link className="btn" to="/">Volver al inicio</Link>
 
             <Link className="btn btn--primary" to="/vivienda/publicar">Publicar vivienda</Link>
-            {adminUI ? <Link className="btn" to="/admin/ofertas">Admin</Link> : null}
+            
           </div>
 
           <header className="viviendaHeader">

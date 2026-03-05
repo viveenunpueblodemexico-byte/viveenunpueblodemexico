@@ -69,7 +69,7 @@ export default function Traspasos() {
             <Link className="btn" to="/">Volver al inicio</Link>
 
             <Link className="btn btn--primary" to="/traspasos/publicar">Publicar traspaso</Link>
-            {adminUI ? <Link className="btn" to="/admin/ofertas">Admin</Link> : null}
+            
           </div>
 
           <header className="traspasosHeader">
