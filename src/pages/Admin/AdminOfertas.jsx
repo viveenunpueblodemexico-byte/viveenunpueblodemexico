@@ -36,7 +36,7 @@ export default function AdminOfertas() {
       ? "Aprobadas"
       : vista === "rechazadas"
       ? "Rechazadas"
-      : "Tomadas";
+      : "Cerradas";
   // Sync a URL para compartir/recargar sin perder estado
   useEffect(() => {
     setSearchParams((prev) => {
@@ -187,7 +187,7 @@ async function onDelete(it) {
 
               <button style={tabBtn(vista === "aprobadas")} onClick={() => setVista("aprobadas")} disabled={loading}>Aprobadas</button>
               <button style={tabBtn(vista === "rechazadas")} onClick={() => setVista("rechazadas")} disabled={loading}>Rechazadas</button>
-              <button style={tabBtn(vista === "tomadas")} onClick={() => setVista("tomadas")} disabled={loading}>Tomadas</button>
+              <button style={tabBtn(vista === "tomadas")} onClick={() => setVista("tomadas")} disabled={loading}>Cerradas</button>
             </div>
 
             {/* Tabs: Tipo */}
@@ -238,6 +238,16 @@ async function onDelete(it) {
                     </span>
                     <span style={{ marginLeft: 8, padding: "2px 8px", borderRadius: 999, border: "1px solid var(--border)", fontSize: 12, opacity: 0.9 }}>
                       {it.status}
+
+                    {it.status === "tomada"
+                        ? "Cerrada"
+                        : it.status === "aprobada"
+                        ? "Aprobada"
+                        : it.status === "rechazada"
+                        ? "Rechazada"
+                        : it.status === "pendiente"
+                        ? "Pendiente"
+                        : it.status}
                     </span>
 
                   </div>
@@ -264,7 +274,7 @@ async function onDelete(it) {
                   {vista === "aprobadas" ? (
                     <>
                       <button className="btn" onClick={() => onTaken(it)} disabled={busyId === it.id}>
-                        {busyId === it.id ? "…" : "Marcar tomada"}
+                        {busyId === it.id ? "…" : "Cerrar oferta"}
                       </button>
                       <button className="btn" onClick={() => onReject(it)} disabled={busyId === it.id}>
                         {busyId === it.id ? "…" : "Rechazar"}

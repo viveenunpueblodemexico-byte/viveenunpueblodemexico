@@ -10,6 +10,7 @@ import {
   serverTimestamp,
   updateDoc,
   deleteDoc,
+  deleteField,
   where,
 } from "firebase/firestore";
 import { auth, db } from "../firebase";
@@ -190,11 +191,12 @@ export async function aprobarOferta({ puebloId, ofertaId }) {
   const ref = doc(db, "pueblos", puebloId, "ofertas", ofertaId);
 
   await updateDoc(ref, {
-    activo: true,
-    status: "aprobada",
-    updatedAt: serverTimestamp(),
-    ...moderationMeta("aprobar"),
-  });
+  activo: true,
+  status: "aprobada",
+  tomadaAt: deleteField(),
+  updatedAt: serverTimestamp(),
+  ...moderationMeta("aprobar"),
+});
 }
 
 export async function rechazarOferta({ puebloId, ofertaId }) {
@@ -202,11 +204,12 @@ export async function rechazarOferta({ puebloId, ofertaId }) {
   const ref = doc(db, "pueblos", puebloId, "ofertas", ofertaId);
 
   await updateDoc(ref, {
-    activo: false,
-    status: "rechazada",
-    updatedAt: serverTimestamp(),
-    ...moderationMeta("rechazar"),
-  });
+  activo: false,
+  status: "rechazada",
+  tomadaAt: deleteField(),
+  updatedAt: serverTimestamp(),
+  ...moderationMeta("rechazar"),
+});
 }
 
 // ============================
@@ -265,11 +268,12 @@ export async function reactivarOferta({ puebloId, ofertaId }) {
   const ref = doc(db, "pueblos", puebloId, "ofertas", ofertaId);
 
   await updateDoc(ref, {
-    activo: true,
-    status: "aprobada",
-    updatedAt: serverTimestamp(),
-    ...moderationMeta("reactivar"),
-  });
+  activo: true,
+  status: "aprobada",
+  tomadaAt: deleteField(),
+  updatedAt: serverTimestamp(),
+  ...moderationMeta("reactivar"),
+});
 }
 // ============================
 // Usuario: mis publicaciones (todas, incluyendo pendientes)

@@ -20,7 +20,7 @@ function label(status) {
     pendiente: "Pendiente",
     aprobada: "Aprobada",
     rechazada: "Rechazada",
-    tomada: "Tomada",
+    tomada: "Cerrada",
   };
   return map[status] || status || "—";
 }
@@ -157,7 +157,7 @@ async function onDelete(it) {
         <div className="stat"><b>{stats.pendiente}</b><span>Pendientes</span></div>
         <div className="stat"><b>{stats.aprobada}</b><span>Aprobadas</span></div>
         <div className="stat"><b>{stats.rechazada}</b><span>Rechazadas</span></div>
-        <div className="stat"><b>{stats.tomada}</b><span>Tomadas</span></div>
+        <div className="stat"><b>{stats.tomada}</b><span>Cerradas</span></div>
         </div>
         ) : null}
 
@@ -206,8 +206,8 @@ async function onDelete(it) {
           ) : (
              <span className="mispub__hint">
               {it.status === "aprobada" ? "Aprobada: ya no se puede editar." :
-              it.status === "rechazada" ? "Rechazada: ya no se puede editar." :
-              it.status === "tomada" ? "Tomada: ya no se puede editar." :
+              it.status === "rechazada" ? "Rechazada: ya no se puede editar." :      
+              it.status === "tomada" ? "Cerrada: ya no se puede editar." :
               "Esta publicación ya no es editable."}
             </span>
           )}
