@@ -11,7 +11,7 @@ export default function SiteFooter() {
             <span className="siteFooter__leaf" aria-hidden="true">🌿</span>
             Vive en un Pueblo
           </span>
-          <span className="siteFooter__note">mock visual</span>
+          <span className="siteFooter__note">| México</span>
         </Link>
 
         <nav className="siteFooter__nav" aria-label="Enlaces del pie">
@@ -20,6 +20,9 @@ export default function SiteFooter() {
           <NavLink className="siteFooter__link" to="/vivienda">Vivienda</NavLink>
           <NavLink className="siteFooter__link" to="/traspasos">Traspasos</NavLink>
           <NavLink className="siteFooter__link" to="/acerca">Acerca</NavLink>
+          <NavLink className="siteFooter__link" to="/privacidad">Privacidad</NavLink>
+          <NavLink className="siteFooter__link" to="/terminos">Términos</NavLink>
+          <NavLink className="siteFooter__link" to="/cookies">Cookies</NavLink>
         </nav>
       </Container>
     </footer>

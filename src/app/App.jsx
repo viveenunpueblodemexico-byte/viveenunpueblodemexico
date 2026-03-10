@@ -4,10 +4,15 @@ import SiteHeader from "../components/layout/SiteHeader/SiteHeader";
 import SiteFooter from "../components/layout/SiteFooter/SiteFooter";
 
 import Home from "../pages/Home/Home";
+import Acerca from "../pages/Acerca/Acerca";
 import Estados from "../pages/Estados/Estados";
 import Estado from "../pages/Estado/Estado";
 import Pueblos from "../pages/Pueblos/Pueblos";
 import PuebloDetalle from "../pages/PuebloDetalle/PuebloDetalle";
+
+import Privacidad from "../pages/Privacidad/Privacidad";
+import Terminos from "../pages/Terminos/Terminos";
+import Cookies from "../pages/Cookies/Cookies";
 
 import PuebloForo from "../pages/PuebloForo/PuebloForo";
 import ThreadDetalle from "../pages/PuebloForo/ThreadDetalle";
@@ -38,9 +43,14 @@ export default function App() {
        <main className="appMain">
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/acerca" element={<Acerca />} />
         <Route path="/login" element={<Login />} />
         <Route path="/estados" element={<Estados />} />
         <Route path="/estado/:estadoSlug" element={<Estado />} />
+
+        <Route path="/privacidad" element={<Privacidad />} />
+        <Route path="/terminos" element={<Terminos />} />
+        <Route path="/cookies" element={<Cookies />} />
 
         <Route path="/pueblos" element={<Pueblos />} />
         <Route path="/pueblo/:slug" element={<PuebloDetalle />} />
