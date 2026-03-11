@@ -223,3 +223,108 @@
   flex-wrap: wrap;
   align-items: center;
 }
+.home__authCard--withMedia {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.home__authContent {
+  min-width: 0;
+}
+
+.home__authMedia {
+  position: relative;
+  min-height: 180px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #d8d3c8;
+  border: 1px solid rgba(47, 79, 62, 0.1);
+  box-shadow: 0 10px 28px rgba(47, 79, 62, 0.08);
+}
+
+.home__authVideo {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.home__authVideoOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.01) 48%,
+    rgba(31, 45, 37, 0.08) 100%
+  );
+}
+
+@media (max-width: 980px) {
+  .home__authCard--withMedia {
+    grid-template-columns: 1fr;
+  }
+
+  .home__authMedia {
+    min-height: 220px;
+    order: -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .home__authMedia {
+    min-height: 180px;
+    border-radius: 20px;
+  }
+}
+.home__authCard--videoBg {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  min-height: 168px;
+}
+
+.home__authBgVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+
+  /* mueve el encuadre un poco para que aparezca más la calle/carro */
+  object-position: 60% 73%;
+
+  z-index: 0;
+
+  /* menos zoom para que se vea más escena y más movimiento */
+  transform: scale(1.01);
+
+  /* menos lavado para que el video tenga vida */
+  filter: saturate(0.98) contrast(0.96) brightness(0.96);
+}
+
+.home__authBgOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  /* izquierda más protegida para texto, derecha más visible para notar el movimiento */
+  background:
+    linear-gradient(
+      90deg,
+      rgba(247, 243, 236, 0.90) 0%,
+      rgba(247, 243, 236, 0.82) 22%,
+      rgba(247, 243, 236, 0.62) 42%,
+      rgba(247, 243, 236, 0.32) 64%,
+      rgba(247, 243, 236, 0.18) 100%
+    );
+}
+
+.home__authContent {
+  position: relative;
+  z-index: 2;
+}
