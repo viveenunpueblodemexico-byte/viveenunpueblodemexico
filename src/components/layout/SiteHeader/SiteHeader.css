@@ -20,19 +20,33 @@
 
 /* Brand */
 .siteHeader__brand {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
   text-decoration: none;
   color: inherit;
+  flex-shrink: 0;
 }
 
-.siteHeader__mark {
-  display: inline-flex;
+.siteHeader__logo {
+  display: block;
+  height: 44px;
+  width: auto;
+  max-width: 280px;
+  object-fit: contain;
 }
 
-.siteHeader__name {
-  font-weight: 700;
+@media (max-width: 1100px) {
+  .siteHeader__logo {
+    height: 40px;
+    max-width: 240px;
+  }
+}
+
+@media (max-width: 900px) {
+  .siteHeader__logo {
+    height: 36px;
+    max-width: 200px;
+  }
 }
 
 /* Desktop nav */

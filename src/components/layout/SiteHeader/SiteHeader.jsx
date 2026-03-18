@@ -38,9 +38,12 @@ export default function SiteHeader() {
     <header className="siteHeader">
       <Container className="siteHeader__inner">
         {/* Brand */}
-        <NavLink to="/" className="siteHeader__brand" onClick={() => setOpen(false)}>
-          <span className="siteHeader__mark" aria-hidden="true">🌿</span>
-          <span className="siteHeader__name">Vive en un Pueblo</span>
+        <NavLink to="/" className="siteHeader__brand" onClick={() => setOpen(false)} aria-label="Ir al inicio">
+          <img
+            src="/logo-pueblos.png"
+            alt="Vive en un Pueblo de México"
+            className="siteHeader__logo"
+          />
         </NavLink>
 
         {/* Desktop nav */}

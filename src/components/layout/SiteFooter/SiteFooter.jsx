@@ -7,11 +7,16 @@ export default function SiteFooter() {
     <footer className="siteFooter">
       <Container className="siteFooter__inner">
         <Link to="/" className="siteFooter__left" aria-label="Ir al inicio">
-          <span className="siteFooter__brand">
-            <span className="siteFooter__leaf" aria-hidden="true">🌿</span>
-            Vive en un Pueblo
+          <img
+            src="/pueblos-iso.png"
+            alt="Vive en un Pueblo de México"
+            className="siteFooter__logo"
+          />
+
+          <span className="siteFooter__brandText">
+            <span className="siteFooter__brandTitle">Vive en un Pueblo</span>
+            <span className="siteFooter__brandSub">México</span>
           </span>
-          <span className="siteFooter__note">| México</span>
         </Link>
 
         <nav className="siteFooter__nav" aria-label="Enlaces del pie">
