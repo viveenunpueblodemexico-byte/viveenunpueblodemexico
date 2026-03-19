@@ -1,0 +1,206 @@
+.puebloExploreCard__icon {
+  color: #c9723d;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  line-height: 0;
+}
+
+.puebloExploreCard__icon svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+.puebloExploreGrid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.puebloExploreCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  min-height: 190px;
+  padding: 18px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(35, 58, 50, 0.10);
+  background: rgba(255, 255, 255, 0.42);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.puebloExploreCard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(201, 114, 61, 0.28);
+  box-shadow: 0 10px 24px rgba(26, 54, 44, 0.07);
+}
+
+.puebloExploreCard__iconWrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  background: rgba(201, 114, 61, 0.08);
+  border: 1px solid rgba(201, 114, 61, 0.14);
+}
+
+.puebloExploreCard__icon {
+  color: #c9723d;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  margin-bottom: 0;
+}
+
+.puebloExploreCard__icon svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+.puebloExploreCard__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #23433a;
+  margin-bottom: 8px;
+}
+
+.puebloExploreCard__text {
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: rgba(35, 58, 50, 0.76);
+  margin-bottom: 16px;
+  max-width: 26ch;
+}
+
+.puebloExploreCard__cta {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(201, 114, 61, 0.12);
+  color: #b76433;
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+@media (max-width: 768px) {
+  .puebloExploreGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .puebloExploreCard {
+    min-height: unset;
+    padding: 16px 14px;
+  }
+
+  .puebloExploreCard__text {
+    max-width: none;
+  }
+}
+
+.puebloHeroCard {
+  margin-top: 10px;
+  margin-bottom: 22px;
+  padding: 22px;
+  border-radius: 22px;
+  border: 1px solid rgba(35, 58, 50, 0.08);
+  background: rgba(255, 255, 255, 0.34);
+  box-shadow: 0 10px 24px rgba(26, 54, 44, 0.04);
+}
+
+.puebloHeroCard__title {
+  margin-top: 0;
+  margin-bottom: 6px;
+  color: #23433a;
+}
+
+.puebloHeroCard__subtitle {
+  margin-top: 0;
+  margin-bottom: 0;
+  color: rgba(35, 58, 50, 0.72);
+}
+
+.puebloHeroCard__imageWrap {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.puebloHeroCard__image {
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  display: block;
+  border-radius: 18px;
+  border: 1px solid rgba(35, 58, 50, 0.08);
+}
+
+.puebloHeroCard__description {
+  margin-top: 10px;
+  margin-bottom: 0;
+  line-height: 1.7;
+  color: rgba(35, 58, 50, 0.9);
+}
+
+.puebloHeroCard__description--muted {
+  color: rgba(35, 58, 50, 0.62);
+}
+
+.puebloHeroCard__tags {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.puebloHeroCard__tag {
+  font-size: 12px;
+  line-height: 1;
+  color: rgba(35, 58, 50, 0.86);
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(35, 58, 50, 0.10);
+  background: rgba(255, 255, 255, 0.52);
+}
+
+@media (max-width: 768px) {
+  .puebloHeroCard {
+    padding: 16px;
+    border-radius: 18px;
+    margin-bottom: 18px;
+  }
+
+  .puebloHeroCard__image {
+    max-height: 280px;
+    border-radius: 14px;
+  }
+
+  .puebloHeroCard__description {
+    line-height: 1.62;
+  }
+}

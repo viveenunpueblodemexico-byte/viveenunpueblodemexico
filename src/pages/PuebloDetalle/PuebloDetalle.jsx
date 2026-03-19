@@ -4,6 +4,8 @@ import ThreadList from "../../components/foro/ThreadList";
 import { getPuebloBySlug } from "../../services/pueblos";
 import { getOfertasActivasByPuebloId } from "../../services/ofertas";import { setPageSEO, buildAbsoluteUrl, clearManagedSEO } from "../../utils/seo";
 import { timeAgo } from "../../utils/date";
+import "./PuebloDetalle.css";
+
 
 export default function PuebloDetalle() {
   const { slug } = useParams();
@@ -147,59 +149,45 @@ export default function PuebloDetalle() {
     </div>
 
 
-      <h1 style={{ marginTop: 12, marginBottom: 6 }}>
-        {pueblo.nombre} {pueblo.destacado ? "⭐" : ""}
-      </h1>
+    <div className="puebloHeroCard">
+  <h1 className="puebloHeroCard__title">
+    {pueblo.nombre} {pueblo.destacado ? "⭐" : ""}
+  </h1>
 
-      <p style={{ opacity: 0.85, marginTop: 0 }}>
-        {[pueblo.municipio, pueblo.estado].filter(Boolean).join(", ")}
-      </p>
+  <p className="puebloHeroCard__subtitle">
+    {[pueblo.municipio, pueblo.estado].filter(Boolean).join(", ")}
+  </p>
 
-      {/* HERO IMAGE */}
-      {pueblo.imagenUrl ? (
-        <div style={{ marginTop: 16, marginBottom: 16 }}>
-          <img
-            src={pueblo.imagenUrl}
-            alt={pueblo.nombre}
-            style={{
-              width: "100%",
-              maxHeight: 420,
-              objectFit: "cover",
-              borderRadius: 16,
-              border: "1px solid rgba(255,255,255,0.08)",
-            }}
-            loading="lazy"
-          />
-        </div>
-      ) : null}
+  {/* HERO IMAGE */}
+  {pueblo.imagenUrl ? (
+    <div className="puebloHeroCard__imageWrap">
+      <img
+        src={pueblo.imagenUrl}
+        alt={pueblo.nombre}
+        className="puebloHeroCard__image"
+        loading="lazy"
+      />
+    </div>
+  ) : null}
 
-      {pueblo.descripcionCorta ? (
-        <p style={{ lineHeight: 1.6, marginTop: 10 }}>{pueblo.descripcionCorta}</p>
-      ) : (
-        <p style={{ lineHeight: 1.6, opacity: 0.85, marginTop: 10 }}>
-          (Descripción pendiente)
-        </p>
-      )}
+  {pueblo.descripcionCorta ? (
+    <p className="puebloHeroCard__description">{pueblo.descripcionCorta}</p>
+  ) : (
+    <p className="puebloHeroCard__description puebloHeroCard__description--muted">
+      (Descripción pendiente)
+    </p>
+  )}
 
-      {pueblo.tags?.length > 0 && (
-        <div style={{ marginTop: 10, display: "flex", gap: 8, flexWrap: "wrap" }}>
-          {pueblo.tags.map((t) => (
-            <span
-              key={t}
-              style={{
-                fontSize: 12,
-                opacity: 0.9,
-                padding: "6px 10px",
-                borderRadius: 999,
-                border: "1px solid rgba(255,255,255,0.10)",
-                background: "rgba(255,255,255,0.04)",
-              }}
-            >
-              {t}
-            </span>
-          ))}
-        </div>
-      )}
+  {pueblo.tags?.length > 0 && (
+    <div className="puebloHeroCard__tags">
+      {pueblo.tags.map((t) => (
+        <span key={t} className="puebloHeroCard__tag">
+          {t}
+        </span>
+      ))}
+    </div>
+  )}
+</div>
 
       {/* ACCESOS RÁPIDOS */}
 <div
@@ -211,63 +199,69 @@ export default function PuebloDetalle() {
 >
   <h2 style={{ margin: 0, fontSize: 18 }}>Explorar en este pueblo</h2>
 
-  <div
-    style={{
-      marginTop: 12,
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-      gap: 12,
-    }}
-  >
+  <div className="puebloExploreGrid">
     <Link
-      to="/trabajo"
-      style={{
-        padding: 14,
-        borderRadius: 14,
-        border: "1px solid rgba(255,255,255,0.10)",
-        background: "rgba(255,255,255,0.04)",
-        textDecoration: "none",
-        color: "inherit",
-      }}
+      to={`/trabajo?pueblo=${encodeURIComponent(pueblo.slug)}&puebloNombre=${encodeURIComponent(pueblo.nombre)}`}
+      className="puebloExploreCard"
     >
-      <div style={{ fontWeight: 700, marginBottom: 6 }}>Trabajo</div>
-      <div style={{ opacity: 0.85, lineHeight: 1.45 }}>
-        Vacantes y proyectos (próximamente)
+      <div className="puebloExploreCard__iconWrap" aria-hidden="true">
+        <div className="puebloExploreCard__icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M8 7V5.8C8 4.806 8.806 4 9.8 4h4.4C15.194 4 16 4.806 16 5.8V7" />
+            <path d="M4.5 8.5h15c.828 0 1.5.672 1.5 1.5v7c0 1.105-.895 2-2 2H5c-1.105 0-2-.895-2-2v-7c0-.828.672-1.5 1.5-1.5Z" />
+            <path d="M3 12.5c2.4 1.3 5.7 2 9 2s6.6-.7 9-2" />
+          </svg>
+        </div>
       </div>
+
+      <div className="puebloExploreCard__title">Trabajo</div>
+      <div className="puebloExploreCard__text">
+        Encuentra oportunidades laborales en este pueblo
+      </div>
+      <div className="puebloExploreCard__cta">Ver bolsa →</div>
     </Link>
 
     <Link
-      to="/vivienda"
-      style={{
-        padding: 14,
-        borderRadius: 14,
-        border: "1px solid rgba(255,255,255,0.10)",
-        background: "rgba(255,255,255,0.04)",
-        textDecoration: "none",
-        color: "inherit",
-      }}
+      to={`/vivienda?pueblo=${encodeURIComponent(pueblo.slug)}&puebloNombre=${encodeURIComponent(pueblo.nombre)}`}
+      className="puebloExploreCard"
     >
-      <div style={{ fontWeight: 700, marginBottom: 6 }}>Vivienda</div>
-      <div style={{ opacity: 0.85, lineHeight: 1.45 }}>
-        Rentas, casas y terrenos (próximamente)
+      <div className="puebloExploreCard__iconWrap" aria-hidden="true">
+        <div className="puebloExploreCard__icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M4 10.5 12 4l8 6.5" />
+            <path d="M6.5 9.5V19a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9.5" />
+            <path d="M10 20v-4.2c0-.442.358-.8.8-.8h2.4c.442 0 .8.358.8.8V20" />
+          </svg>
+        </div>
       </div>
+
+      <div className="puebloExploreCard__title">Vivienda</div>
+      <div className="puebloExploreCard__text">
+        Encuentra rentas, casas y terrenos disponibles
+      </div>
+      <div className="puebloExploreCard__cta">Ver bolsa →</div>
     </Link>
 
     <Link
-      to="/traspasos"
-      style={{
-        padding: 14,
-        borderRadius: 14,
-        border: "1px solid rgba(255,255,255,0.10)",
-        background: "rgba(255,255,255,0.04)",
-        textDecoration: "none",
-        color: "inherit",
-      }}
+      to={`/traspasos?pueblo=${encodeURIComponent(pueblo.slug)}&puebloNombre=${encodeURIComponent(pueblo.nombre)}`}
+      className="puebloExploreCard"
     >
-      <div style={{ fontWeight: 700, marginBottom: 6 }}>Traspasos</div>
-      <div style={{ opacity: 0.85, lineHeight: 1.45 }}>
-        Negocios y oportunidades (próximamente)
+      <div className="puebloExploreCard__iconWrap" aria-hidden="true">
+        <div className="puebloExploreCard__icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M4 9h16" />
+            <path d="M6 9V7.5C6 6.672 6.672 6 7.5 6h9c.828 0 1.5.672 1.5 1.5V9" />
+            <path d="M5.5 9h13A1.5 1.5 0 0 1 20 10.5V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7.5A1.5 1.5 0 0 1 5.5 9Z" />
+            <path d="M9 13h6" />
+          </svg>
+        </div>
       </div>
+
+      <div className="puebloExploreCard__title">Traspasos</div>
+      <div className="puebloExploreCard__text">
+        Encuentra negocios y oportunidades para emprender
+      </div>
+      <div className="puebloExploreCard__cta">Ver bolsa →</div>
     </Link>
   </div>
 </div>
@@ -361,33 +355,8 @@ export default function PuebloDetalle() {
         )}
       </div>
 
-      {/* VIDA EN EL PUEBLO */}
-      <div
-        style={{
-          marginTop: 28,
-          paddingTop: 16,
-          borderTop: "1px solid rgba(255,255,255,0.08)",
-        }}
-      >
-        <h2 style={{ margin: 0, fontSize: 18 }}>Vida en el pueblo</h2>
-        <p style={{ opacity: 0.8, marginTop: 8 }}>
-          (Próximamente: clima, movilidad, ritmo de vida, costos estimados, recomendaciones locales)
-        </p>
-      </div>
-
-      {/* SERVICIOS */}
-      <div
-        style={{
-          marginTop: 28,
-          paddingTop: 16,
-          borderTop: "1px solid rgba(255,255,255,0.08)",
-        }}
-      >
-        <h2 style={{ margin: 0, fontSize: 18 }}>Servicios</h2>
-        <p style={{ opacity: 0.8, marginTop: 8 }}>
-          (Próximamente: internet, salud, educación, comercios, transporte y servicios públicos)
-        </p>
-      </div>
+      {/* COMUNIDAD / FORO */}
+      {/* Se ocultaron temporalmente "Vida en el pueblo" y "Servicios" hasta definir fuente de datos */}
 
       {/* COMUNIDAD / FORO */}
         <div

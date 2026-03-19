@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Container from "../../components/layout/Container/Container";
 import "./traspasos.css";
 import { timeAgo } from "../../utils/date";
@@ -11,6 +11,11 @@ import { isEmailAllowed } from "../../utils/admin";
 import { getOfertasActivas } from "../../services/ofertas";
 
 export default function Traspasos() {
+  const [searchParams] = useSearchParams();
+
+  const puebloSlugParam = (searchParams.get("pueblo") || "").trim();
+  const puebloNombreParam = (searchParams.get("puebloNombre") || "").trim();
+
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -50,15 +55,24 @@ export default function Traspasos() {
   }, [items]);
 
   const filtered = useMemo(() => {
-    const needle = q.trim().toLowerCase();
-    return items.filter((it) => {
-      const okEstado = estadoSlug === "all" ? true : it.estadoSlug === estadoSlug;
-      const hay = `${it.titulo || ""} ${it.descripcion || ""} ${it.puebloNombre || ""} ${it.estado || ""}`
-        .toLowerCase()
-        .includes(needle);
-      return okEstado && hay;
-    });
-  }, [items, q, estadoSlug]);
+  const needle = q.trim().toLowerCase();
+
+  return items.filter((it) => {
+    const okEstado = estadoSlug === "all" ? true : it.estadoSlug === estadoSlug;
+
+    const okPueblo = !puebloSlugParam
+      ? true
+      : (it.puebloSlug || "") === puebloSlugParam;
+
+    const hay = !needle
+      ? true
+      : `${it.titulo || ""} ${it.descripcion || ""} ${it.puebloNombre || ""} ${it.estado || ""}`
+          .toLowerCase()
+          .includes(needle);
+
+    return okEstado && okPueblo && hay;
+  });
+}, [items, q, estadoSlug, puebloSlugParam]);
 
   return (
     <Container>
@@ -73,6 +87,20 @@ export default function Traspasos() {
           </div>
 
           <header className="traspasosHeader">
+
+            {puebloSlugParam && filtered.length > 0 ? (
+              <div
+                style={{
+                  marginTop: 10,
+                  textAlign: "center",
+                  fontSize: 14,
+                  opacity: 0.9,
+                }}
+              >
+                Mostrando traspasos para <strong>{puebloNombreParam || puebloSlugParam}</strong>
+              </div>
+            ) : null}
+
             <h1 className="traspasosTitle">Traspasos</h1>
             <p className="traspasosLead">
               Negocios y proyectos publicados por la comunidad en pueblos de México.
@@ -104,16 +132,82 @@ export default function Traspasos() {
         {error ? <p style={{ color: "crimson" }}>{error}</p> : null}
 
         <div className="traspasosList">
-          {!loading && !error && filtered.length === 0 ? (
-            <div className="traspasosEmpty">
-              <h3>No hay traspasos publicados por ahora.</h3>
-              <p>
-                Si vas a traspasar un negocio, proyecto o iniciativa local,
-                publícalo para que otras personas interesadas lo conozcan.
-              </p>
-              <Link className="btn btn--primary" to="/traspasos/publicar">Publicar traspaso</Link>
+        {!loading && !error && filtered.length === 0 ? (
+          <div
+            style={{
+              margin: "28px auto 0",
+              maxWidth: 680,
+              padding: "28px 22px",
+              textAlign: "center",
+              borderRadius: 22,
+              border: "1px solid rgba(35, 58, 50, 0.08)",
+              background: "rgba(255,255,255,0.38)",
+            }}
+          >
+            <img
+              src="/pueblos-iso.png"
+              alt="Vive en un Pueblo"
+              style={{
+                width: 72,
+                height: 72,
+                objectFit: "contain",
+                display: "block",
+                margin: "0 auto 14px",
+              }}
+            />
+
+            <h3
+              style={{
+                margin: "0 0 8px",
+                color: "#23433a",
+                fontSize: "1.35rem",
+                fontWeight: 800,
+              }}
+            >
+              {puebloNombreParam
+                ? `Aún no hay traspasos en ${puebloNombreParam}`
+                : "Aún no hay traspasos publicados"}
+            </h3>
+
+            <p
+              style={{
+                margin: "0 auto",
+                maxWidth: "48ch",
+                lineHeight: 1.6,
+                color: "rgba(35, 58, 50, 0.76)",
+              }}
+            >
+              {puebloNombreParam
+                ? "Todavía no se han publicado negocios o proyectos para este pueblo. Puedes ver todos los traspasos disponibles o publicar el primero."
+                : "Si vas a traspasar un negocio, proyecto o iniciativa local, publícalo para que otras personas interesadas lo conozcan."}
+            </p>
+
+            <div
+              style={{
+                marginTop: 18,
+                display: "flex",
+                gap: 12,
+                justifyContent: "center",
+                flexWrap: "wrap",
+              }}
+            >
+              <Link
+                to="/traspasos"
+                className="btn"
+                style={{
+                  border: "1px solid rgba(35, 58, 50, 0.14)",
+                  background: "transparent",
+                }}
+              >
+                Ver todo
+              </Link>
+
+              <Link to="/traspasos/publicar" className="btn btn--primary">
+                Publicar traspaso
+              </Link>
             </div>
-          ) : null}
+          </div>
+        ) : null}
 
           {filtered.map((it) => (
             <article key={it.id} className="traspasosCard">

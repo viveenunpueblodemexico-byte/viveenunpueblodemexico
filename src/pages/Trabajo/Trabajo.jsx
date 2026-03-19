@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link , useSearchParams } from "react-router-dom";
 import Container from "../../components/layout/Container/Container";
 import "./trabajo.css";
 import { timeAgo } from "../../utils/date";
@@ -13,6 +13,11 @@ import { isEmailAllowed } from "../../utils/admin";
 import { getOfertasActivas } from "../../services/ofertas";
 
 export default function Trabajo() {
+  const [searchParams] = useSearchParams();
+
+  const puebloSlugParam = (searchParams.get("pueblo") || "").trim();
+  const puebloNombreParam = (searchParams.get("puebloNombre") || "").trim();
+
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -60,17 +65,24 @@ export default function Trabajo() {
   }, [items]);
 
   const filtered = useMemo(() => {
-    const needle = q.trim().toLowerCase();
-    return items.filter((it) => {
-      const okEstado = estadoSlug === "all" ? true : it.estadoSlug === estadoSlug;
-      const okText = !needle
-        ? true
-        : `${it.titulo} ${it.descripcion} ${it.puebloNombre} ${it.estado}`
-            .toLowerCase()
-            .includes(needle);
-      return okEstado && okText;
-    });
-  }, [items, q, estadoSlug]);
+  const needle = q.trim().toLowerCase();
+
+  return items.filter((it) => {
+    const okEstado = estadoSlug === "all" ? true : it.estadoSlug === estadoSlug;
+
+    const okPueblo = !puebloSlugParam
+      ? true
+      : (it.puebloSlug || "") === puebloSlugParam;
+
+    const okText = !needle
+      ? true
+      : `${it.titulo || ""} ${it.descripcion || ""} ${it.puebloNombre || ""} ${it.estado || ""}`
+          .toLowerCase()
+          .includes(needle);
+
+    return okEstado && okPueblo && okText;
+  });
+}, [items, q, estadoSlug, puebloSlugParam]);
 
   return (
     <main className="trabajoPage">
@@ -94,6 +106,19 @@ export default function Trabajo() {
         </div>
 
         <header className="trabajoHeader">
+          {puebloSlugParam && filtered.length > 0 ? (
+            <div
+              style={{
+                marginTop: 10,
+                textAlign: "center",
+                fontSize: 14,
+                opacity: 0.9,
+              }}
+            >
+              Mostrando oportunidades para <strong>{puebloNombreParam || puebloSlugParam}</strong>
+            </div>
+          ) : null}
+
           <h1 className="trabajoTitle">Bolsa de Trabajo</h1>
           <p className="text-gray-600 text-center max-w-prose mx-auto">
             Oportunidades activas publicadas para pueblos de México.
@@ -135,7 +160,82 @@ export default function Trabajo() {
           ) : null}
 
 
-          {!loading && filtered.length === 0 ? <div>No hay ofertas activas por ahora.</div> : null}
+          {!loading && !error && filtered.length === 0 ? (
+            <div
+              style={{
+                margin: "28px auto 0",
+                maxWidth: 680,
+                padding: "28px 22px",
+                textAlign: "center",
+                borderRadius: 22,
+                border: "1px solid rgba(35, 58, 50, 0.08)",
+                background: "rgba(255,255,255,0.38)",
+              }}
+            >
+              <img
+                src="/pueblos-iso.png"
+                alt="Vive en un Pueblo"
+                style={{
+                  width: 72,
+                  height: 72,
+                  objectFit: "contain",
+                  display: "block",
+                  margin: "0 auto 14px",
+                }}
+              />
+
+              <h3
+                style={{
+                  margin: "0 0 8px",
+                  color: "#23433a",
+                  fontSize: "1.35rem",
+                  fontWeight: 800,
+                }}
+              >
+                {puebloNombreParam
+                  ? `Aún no hay ofertas activas en ${puebloNombreParam}`
+                  : "Aún no hay ofertas activas"}
+              </h3>
+
+              <p
+                style={{
+                  margin: "0 auto",
+                  maxWidth: "48ch",
+                  lineHeight: 1.6,
+                  color: "rgba(35, 58, 50, 0.76)",
+                }}
+              >
+                {puebloNombreParam
+                  ? "Todavía no se han publicado oportunidades laborales para este pueblo. Puedes ver todas las ofertas disponibles o publicar la primera."
+                  : "Todavía no se han publicado oportunidades laborales. Puedes explorar otros pueblos o publicar la primera oferta."}
+              </p>
+
+              <div
+                style={{
+                  marginTop: 18,
+                  display: "flex",
+                  gap: 12,
+                  justifyContent: "center",
+                  flexWrap: "wrap",
+                }}
+              >
+                <Link
+                  to="/trabajo"
+                  className="btn"
+                  style={{
+                    border: "1px solid rgba(35, 58, 50, 0.14)",
+                    background: "transparent",
+                  }}
+                >
+                  Ver todo
+                </Link>
+
+                <Link to="/trabajo/publicar" className="btn btn--primary">
+                  Publicar oferta
+                </Link>
+              </div>
+            </div>
+          ) : null}
 
           <div style={{ display: "grid", gap: 12 }}>
             {filtered.map((it) => (

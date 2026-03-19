@@ -15,7 +15,7 @@ export default function SiteFooter() {
 
           <span className="siteFooter__brandText">
             <span className="siteFooter__brandTitle">Vive en un Pueblo</span>
-            <span className="siteFooter__brandSub">México</span>
+            <span className="siteFooter__brandSub">de México</span>
           </span>
         </Link>
 
