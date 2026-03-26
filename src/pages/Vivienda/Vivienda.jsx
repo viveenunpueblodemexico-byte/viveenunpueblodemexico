@@ -168,7 +168,7 @@ export default function Vivienda() {
                 }}
               >
                 {puebloNombreParam
-                  ? `Aún no hay opciones de vivienda en ${puebloNombreParam}`
+                  ? `Aún no hay más opciones de vivienda en ${puebloNombreParam}`
                   : "Aún no hay opciones de vivienda publicadas"}
               </h3>
 
