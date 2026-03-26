@@ -57,3 +57,12 @@
   color: inherit;
   display: block;
 }
+.puebloCard__title{
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+.puebloCard__state,
+.puebloCard__desc,
+.puebloCard__tags{
+  font-family: var(--font-body);
+}

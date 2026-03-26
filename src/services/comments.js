@@ -134,7 +134,7 @@ export default function CommentsList({
               )}
             </div>
 
-            <div className="mt-2">
+            <div style={{ marginTop: '0.5rem' }}>
               {!isEditing ? (
                 <p className="text-sm text-neutral-800 whitespace-pre-wrap">
                   {c.text}
