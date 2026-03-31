@@ -1,0 +1,44 @@
+.authWindowPage {
+  min-height: calc(100vh - 180px);
+  display: grid;
+  place-items: center;
+  padding: 28px 0;
+}
+
+.authWindow {
+  width: min(520px, 100%);
+  border-radius: 22px;
+  border: 1px solid rgba(47, 79, 62, 0.14);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 20px 40px rgba(17, 24, 39, 0.12);
+  padding: 24px;
+  text-align: center;
+}
+
+.authWindow__logo {
+  width: 188px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto 14px;
+}
+
+.authWindow__title {
+  margin: 0 0 8px;
+}
+
+.authWindow__subtitle {
+  margin: 0 0 16px;
+}
+
+.authWindow__error {
+  margin: 0 0 14px;
+  color: crimson;
+}
+
+.authWindow__actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}

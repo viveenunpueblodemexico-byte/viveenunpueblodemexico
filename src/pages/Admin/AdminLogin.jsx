@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { signInWithPopup } from "firebase/auth";
-import { auth, googleProvider } from "../../firebase";
-import Container from "../../components/layout/Container/Container";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../auth/AuthProvider";
+import AuthWindow from "../../components/auth/AuthWindow";
 
 export default function AdminLogin() {
+  const { loginWithGoogle } = useAuth();
+
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "/admin";
@@ -16,7 +17,7 @@ export default function AdminLogin() {
     setError("");
     setLoading(true);
     try {
-      await signInWithPopup(auth, googleProvider);
+      await loginWithGoogle();
       navigate(from, { replace: true });
     } catch (e) {
       setError(e?.message || "No se pudo iniciar sesión.");
@@ -26,26 +27,15 @@ export default function AdminLogin() {
   }
 
   return (
-    <main style={{ padding: "24px 0" }}>
-      <Container>
-        <h1 style={{ marginBottom: 8 }}>Admin</h1>
-        <p style={{ marginBottom: 16 }}>
-          Inicia sesión con Google para moderar ofertas, y foro.
-        </p>
-
-        {error ? (
-          <div style={{ marginBottom: 12, color: "crimson" }}>{error}</div>
-        ) : null}
-
-        <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
-          <button className="btn btn--primary" onClick={onLogin} disabled={loading}>
-            {loading ? "Entrando…" : "Entrar con Google"}
-          </button>
-          <Link className="btn" to="/">
-            Volver al sitio
-          </Link>
-        </div>
-      </Container>
-    </main>
+    <AuthWindow
+        title="Acceso admin"
+        subtitle="Inicia sesión con Google para moderar ofertas y foro."
+        error={error}
+        loading={loading}
+        primaryLabel="Inicia sesión con Google"
+        onPrimary={onLogin}
+        secondaryTo="/"
+        secondaryLabel="Volver al sitio"
+      />
   );
 }
