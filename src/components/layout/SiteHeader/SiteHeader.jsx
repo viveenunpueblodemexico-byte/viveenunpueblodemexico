@@ -5,11 +5,20 @@ import "./SiteHeader.css";
 
 import { useAuth } from "../../../auth/AuthProvider";
 
+const NAV_LINKS = [
+  { to: "/estados", label: "Estados" },
+  { to: "/pueblos", label: "Pueblos" },
+  { to: "/trabajo", label: "Trabajo" },
+  { to: "/vivienda", label: "Vivienda" },
+  { to: "/traspasos", label: "Traspasos" },
+  { to: "/acerca", label: "Acerca de" },
+];
+
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, logout } = useAuth();
 
   useEffect(() => {
     setOpen(false);
@@ -30,8 +39,10 @@ export default function SiteHeader() {
   const profileName = user?.displayName || user?.email || "Mi perfil";
   const profileRoute = isAdmin ? "/admin" : "/mis-publicaciones";
 
-
-
+  async function onLogout() {
+    await logout();
+    setOpen(false);
+  }
 
 
   return (
@@ -48,24 +59,11 @@ export default function SiteHeader() {
 
         {/* Desktop nav */}
         <nav className="siteHeader__nav" aria-label="Navegación principal">
-          <NavLink to="/estados" className={({ isActive }) => `siteHeader__link ${isActive ? "is-active" : ""}`}>
-            Estados
-          </NavLink>
-         <NavLink to="/pueblos" className={({ isActive }) => `siteHeader__link ${isActive ? "is-active" : ""}`}>
-            Pueblos
-          </NavLink>
-          <NavLink to="/trabajo" className={({ isActive }) => `siteHeader__link ${isActive ? "is-active" : ""}`}>
-            Trabajo
-          </NavLink>
-          <NavLink to="/vivienda" className={({ isActive }) => `siteHeader__link ${isActive ? "is-active" : ""}`}>
-            Vivienda
-          </NavLink>
-          <NavLink to="/traspasos" className={({ isActive }) => `siteHeader__link ${isActive ? "is-active" : ""}`}>
-            Traspasos
-          </NavLink>
-          <NavLink to="/acerca" className={({ isActive }) => `siteHeader__link ${isActive ? "is-active" : ""}`}>
-            Acerca de
-          </NavLink>
+        {NAV_LINKS.map(({ to, label }) => (
+            <NavLink key={to} to={to} className={({ isActive }) => `siteHeader__link ${isActive ? "is-active" : ""}`}>
+              {label}
+            </NavLink>
+          ))}
         </nav>
 
         {/* CTAs desktop */}
@@ -78,26 +76,36 @@ export default function SiteHeader() {
             Recibir novedades
           </a>
 
-          {user && (
-            <NavLink
-              to={profileRoute}
-              className="siteHeader__profile"
-              aria-label={`Abrir perfil de ${profileName}`}
-              title={profileName}
-            >
-              {profilePhoto ? (
-                <img
-                  src={profilePhoto}
-                  alt={profileName}
-                  className="siteHeader__profileImage"
-                  referrerPolicy="no-referrer"
-                />
-              ) : (
-                <span className="siteHeader__profileFallback" aria-hidden="true">
-                  {profileName.charAt(0).toUpperCase()}
-                </span>
-              )}
+          {!user ? (
+            <NavLink to="/login" className="siteHeader__btn siteHeader__btn--ghost">
+              Iniciar sesión
             </NavLink>
+                      ) : (
+            <>
+              <button type="button" className="siteHeader__btn siteHeader__btn--ghost" onClick={onLogout}>
+                Cerrar sesión
+              </button>
+              <NavLink
+                to={profileRoute}
+                className="siteHeader__profile"
+                aria-label={`Abrir perfil de ${profileName}`}
+                title={profileName}
+              >
+                {profilePhoto ? (
+                  <img
+                    src={profilePhoto}
+                    alt={profileName}
+                    className="siteHeader__profileImage"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <span className="siteHeader__profileFallback" aria-hidden="true">
+                    {profileName.charAt(0).toUpperCase()}
+                  </span>
+                )}
+              </NavLink>
+            </>
+
           )}
         </div>
 
@@ -144,24 +152,16 @@ export default function SiteHeader() {
             )}
 
             <div className="siteHeader__mobileLinks">
-              <NavLink to="/estados" className={({ isActive }) => `siteHeader__mobileLink ${isActive ? "is-active" : ""}`} onClick={() => setOpen(false)}>
-                Estados
-              </NavLink>
-              <NavLink to="/pueblos" className={({ isActive }) => `siteHeader__mobileLink ${isActive ? "is-active" : ""}`} onClick={() => setOpen(false)}>
-                Pueblos
-              </NavLink>
-              <NavLink to="/trabajo" className={({ isActive }) => `siteHeader__mobileLink ${isActive ? "is-active" : ""}`} onClick={() => setOpen(false)}>
-                Trabajo
-              </NavLink>
-              <NavLink to="/vivienda" className={({ isActive }) => `siteHeader__mobileLink ${isActive ? "is-active" : ""}`} onClick={() => setOpen(false)}>
-                Vivienda
-              </NavLink>
-              <NavLink to="/traspasos" className={({ isActive }) => `siteHeader__mobileLink ${isActive ? "is-active" : ""}`} onClick={() => setOpen(false)}>
-                Traspasos
-              </NavLink>
-              <NavLink to="/acerca" className={({ isActive }) => `siteHeader__mobileLink ${isActive ? "is-active" : ""}`} onClick={() => setOpen(false)}>
-                Acerca de
-              </NavLink>
+                          {NAV_LINKS.map(({ to, label }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  className={({ isActive }) => `siteHeader__mobileLink ${isActive ? "is-active" : ""}`}
+                  onClick={() => setOpen(false)}
+                >
+                  {label}
+                </NavLink>
+              ))}
             </div>
 
             <div className="siteHeader__mobileCta">
@@ -171,6 +171,16 @@ export default function SiteHeader() {
               <a href="#newsletter" className="siteHeader__btn siteHeader__btn--primary" onClick={() => setOpen(false)}>
                 Recibir novedades
               </a>
+
+              {!user ? (
+                <NavLink to="/login" className="siteHeader__btn siteHeader__btn--ghost" onClick={() => setOpen(false)}>
+                  Iniciar sesión
+                </NavLink>
+              ) : (
+                <button type="button" className="siteHeader__btn siteHeader__btn--ghost" onClick={onLogout}>
+                  Cerrar sesión
+                </button>
+              )}
             </div>
           </Container>
         </div>
