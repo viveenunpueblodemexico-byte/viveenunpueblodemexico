@@ -152,7 +152,7 @@ export default function SiteHeader() {
             )}
 
             <div className="siteHeader__mobileLinks">
-                          {NAV_LINKS.map(({ to, label }) => (
+              {NAV_LINKS.map(({ to, label }) => (
                 <NavLink
                   key={to}
                   to={to}

@@ -19,7 +19,11 @@ export default function Login() {
       await loginWithGoogle();
       navigate(from, { replace: true });
     } catch (e) {
-      setError(e?.message || "No se pudo iniciar sesión.");
+        if (e?.code === "auth/popup-closed-by-user") {
+        setError("");
+        return;
+      }
+      setError("No se pudo iniciar sesión. Intenta nuevamente.");
     } finally {
       setLoading(false);
     }
