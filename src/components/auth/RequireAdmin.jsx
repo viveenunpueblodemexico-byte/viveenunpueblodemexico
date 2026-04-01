@@ -14,7 +14,12 @@ function parseAllowlist() {
 
 export default function RequireAdmin({ children }) {
   const location = useLocation();
-  const allow = useMemo(() => parseAllowlist(), []);
+  
+    const allow = useMemo(() => {
+    const parsed = parseAllowlist();
+    return Array.isArray(parsed) ? parsed : [];
+  }, []);
+
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
 

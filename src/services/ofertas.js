@@ -182,8 +182,8 @@ export async function getOfertasPendientes({ tipo = "trabajo", max = 200 } = {})
       ),
     max
   );
-
- }
+  return snap.docs.map((docu) => normalizeOfertaDoc(docu.data() || {}, docu.id));
+}
 
 // Admin: listar por status (ej: "aprobada", "tomada")
 export async function getOfertasPorStatus({ tipo, status, max = 100 }) {

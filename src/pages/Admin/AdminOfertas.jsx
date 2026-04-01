@@ -48,7 +48,8 @@ export default function AdminOfertas() {
   const [pendientesCount, setPendientesCount] = useState(0);
 
 
-  const count = items.length;
+  const safeItems = Array.isArray(items) ? items : [];
+  const count = safeItems.length;
   const vistaLabel =
     vista === "pendientes"
       ? "Pendientes"
@@ -59,7 +60,7 @@ export default function AdminOfertas() {
       : "Cerradas";
    // URL -> estado (cuando navegamos con back/forward o llegan links con query)
   useEffect(() => {
-        const nextTipo = normalizeTipo(searchParams.get("tipo"));
+    const nextTipo = normalizeTipo(searchParams.get("tipo"));
     const nextVista = normalizeVista(searchParams.get("vista"));
 
     setTipo((prev) => (prev === nextTipo ? prev : nextTipo));
@@ -93,7 +94,7 @@ export default function AdminOfertas() {
                   : "tomada",
               max: 200,
             });
-      setItems(data);
+      setItems(Array.isArray(data) ? data : []);
     } catch (e) {
       setError(e?.message || "No se pudieron cargar las ofertas.");
     } finally {
@@ -246,7 +247,7 @@ async function onDelete(it) {
           {loading ? <div>Cargando…</div> : null}
           {empty ? <div>No hay ofertas {vistaLabel.toLowerCase()} 🎉</div> : null}
 
-          {items.map((it) => (
+          {safeItems.map((it) => (
             <div
               key={it.id}
               style={{
