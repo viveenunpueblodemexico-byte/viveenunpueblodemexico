@@ -13,11 +13,31 @@ import {
   eliminarOfertaAdmin,
 } from "../../services/ofertas";
 
+const TIPOS_VALIDOS = ["trabajo", "vivienda", "traspasos"];
+const VISTAS_VALIDAS = ["pendientes", "aprobadas", "rechazadas", "tomadas"];
+
+function normalizeTipo(value) {
+  return TIPOS_VALIDOS.includes(value) ? value : "trabajo";
+}
+
+function normalizeVista(value) {
+  return VISTAS_VALIDAS.includes(value) ? value : "pendientes";
+}
+
+function statusLabel(status) {
+  if (status === "tomada") return "Cerrada";
+  if (status === "aprobada") return "Aprobada";
+  if (status === "rechazada") return "Rechazada";
+  if (status === "pendiente") return "Pendiente";
+  return status || "—";
+}
+
+
 export default function AdminOfertas() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const initialTipo = searchParams.get("tipo") || "trabajo";
-  const initialVista = searchParams.get("vista") || "pendientes"; // pendientes | aprobadas | rechazadas | tomadas
+  const initialTipo = normalizeTipo(searchParams.get("tipo"));
+  const initialVista = normalizeVista(searchParams.get("vista")); // pendientes | aprobadas | rechazadas | tomadas
 
   const [tipo, setTipo] = useState(initialTipo);
   const [vista, setVista] = useState(initialVista);
@@ -37,14 +57,23 @@ export default function AdminOfertas() {
       : vista === "rechazadas"
       ? "Rechazadas"
       : "Cerradas";
-  // Sync a URL para compartir/recargar sin perder estado
+   // URL -> estado (cuando navegamos con back/forward o llegan links con query)
   useEffect(() => {
-    setSearchParams((prev) => {
-    const next = new URLSearchParams(prev);
-    next.set("tipo", tipo);
-    next.set("vista", vista);
-    return next;
-  }, { replace: true });
+        const nextTipo = normalizeTipo(searchParams.get("tipo"));
+    const nextVista = normalizeVista(searchParams.get("vista"));
+
+    setTipo((prev) => (prev === nextTipo ? prev : nextTipo));
+    setVista((prev) => (prev === nextVista ? prev : nextVista));
+  }, [searchParams]);
+
+  // Estado -> URL para compartir/recargar sin perder filtros
+  useEffect(() => {
+    const currentTipo = normalizeTipo(searchParams.get("tipo"));
+    const currentVista = normalizeVista(searchParams.get("vista"));
+    if (currentTipo === tipo && currentVista === vista) return;
+
+    setSearchParams({ tipo, vista }, { replace: true });
+
   }, [tipo, vista, setSearchParams]);
  
   async function load() {
@@ -237,17 +266,7 @@ async function onDelete(it) {
                       {it.tipo}
                     </span>
                     <span style={{ marginLeft: 8, padding: "2px 8px", borderRadius: 999, border: "1px solid var(--border)", fontSize: 12, opacity: 0.9 }}>
-                      {it.status}
-
-                    {it.status === "tomada"
-                        ? "Cerrada"
-                        : it.status === "aprobada"
-                        ? "Aprobada"
-                        : it.status === "rechazada"
-                        ? "Rechazada"
-                        : it.status === "pendiente"
-                        ? "Pendiente"
-                        : it.status}
+                     {statusLabel(it.status)}
                     </span>
 
                   </div>

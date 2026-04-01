@@ -111,6 +111,24 @@ function moderationMeta(action) {
   };
 }
 
+async function getDocsWithLimitFallback(buildQuery, preferredMax = 200) {
+  const attempts = Array.from(new Set([preferredMax, 100, 50, 20].filter((n) => Number.isFinite(n) && n > 0)));
+  let lastError = null;
+
+  for (const n of attempts) {
+    try {
+      const snap = await getDocs(buildQuery(n));
+      return snap;
+    } catch (e) {
+      lastError = e;
+      if (e?.code !== "permission-denied") throw e;
+    }
+  }
+
+  throw lastError || new Error("No se pudieron cargar las ofertas.");
+}
+
+
 // ============================
 // Bolsa (público): ofertas activas por tipo (collectionGroup)
 // ============================
@@ -153,32 +171,38 @@ const q = query(
 export async function getOfertasPendientes({ tipo = "trabajo", max = 200 } = {}) {
   const ref = collectionGroup(db, "ofertas");
 
-  const q = query(
-    ref,
-    where("status", "==", "pendiente"),
-    where("tipo", "==", tipo),
-    orderBy("createdAt", "desc"),
-    limit(max)
+    const snap = await getDocsWithLimitFallback(
+    (safeMax) =>
+      query(
+        ref,
+        where("status", "==", "pendiente"),
+        where("tipo", "==", tipo),
+        orderBy("createdAt", "desc"),
+        limit(safeMax)
+      ),
+    max
   );
 
-  const snap = await getDocs(q);
-  return snap.docs.map((docu) => normalizeOfertaDoc(docu.data() || {}, docu.id));
-}
+ }
 
 // Admin: listar por status (ej: "aprobada", "tomada")
 export async function getOfertasPorStatus({ tipo, status, max = 100 }) {
   if (!tipo) throw new Error("Falta 'tipo'.");
   if (!status) throw new Error("Falta 'status'.");
 
-  const q = query(
-    collectionGroup(db, "ofertas"),
-    where("tipo", "==", tipo),
-    where("status", "==", status),
-    orderBy("createdAt", "desc"),
-    limit(max)
+    const snap = await getDocsWithLimitFallback(
+    (safeMax) =>
+      query(
+        collectionGroup(db, "ofertas"),
+        where("tipo", "==", tipo),
+        where("status", "==", status),
+        orderBy("createdAt", "desc"),
+        limit(safeMax)
+      ),
+    max
   );
 
-  const snap = await getDocs(q);
+
   return snap.docs.map((docu) => normalizeOfertaDoc(docu.data() || {}, docu.id));
  
 }
