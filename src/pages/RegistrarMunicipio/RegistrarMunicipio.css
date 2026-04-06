@@ -1,0 +1,75 @@
+.registroMunicipio {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 28px 16px 34px;
+}
+
+.registroMunicipio__layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(340px, 1.25fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.registroMunicipio__intro,
+.registroMunicipio__card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  padding: 16px;
+  background: rgba(255,255,255,0.03);
+}
+
+.registroMunicipio__title {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 38px);
+}
+
+.registroMunicipio__sub {
+  margin: 10px 0 0;
+  opacity: 0.88;
+  line-height: 1.45;
+}
+
+.registroMunicipio__bullets {
+  margin: 14px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+  opacity: 0.9;
+}
+
+.registroMunicipio__form {
+  display: grid;
+  gap: 12px;
+}
+
+.registroMunicipio__field {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.registroMunicipio__field input,
+.registroMunicipio__field textarea {
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.2);
+  color: inherit;
+  padding: 10px 12px;
+}
+
+.registroMunicipio__error {
+  color: #ff908f;
+  margin: 0;
+}
+
+.registroMunicipio__ok {
+  color: #7ee787;
+  margin: 0;
+}
+
+@media (max-width: 860px) {
+  .registroMunicipio__layout {
+    grid-template-columns: 1fr;
+  }
+}

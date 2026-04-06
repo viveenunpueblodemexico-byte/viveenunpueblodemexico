@@ -12,6 +12,8 @@ const NAV_LINKS = [
   { to: "/vivienda", label: "Vivienda" },
   { to: "/traspasos", label: "Traspasos" },
   { to: "/acerca", label: "Acerca de" },
+  { to: "/faq", label: "FAQ" },
+  { to: "/registrar-municipio", label: "Registrar municipio" },
 ];
 
 

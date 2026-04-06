@@ -25,6 +25,8 @@ export default function SiteFooter() {
           <NavLink className="siteFooter__link" to="/vivienda">Vivienda</NavLink>
           <NavLink className="siteFooter__link" to="/traspasos">Traspasos</NavLink>
           <NavLink className="siteFooter__link" to="/acerca">Acerca</NavLink>
+          <NavLink className="siteFooter__link" to="/faq">FAQ</NavLink>
+          <NavLink className="siteFooter__link" to="/registrar-municipio">Registrar municipio</NavLink>
           <NavLink className="siteFooter__link" to="/privacidad">Privacidad</NavLink>
           <NavLink className="siteFooter__link" to="/terminos">Términos</NavLink>
           <NavLink className="siteFooter__link" to="/cookies">Cookies</NavLink>

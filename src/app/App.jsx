@@ -33,6 +33,9 @@ import Login from "../pages/Login/Login";
 import MisPublicacionesPage from "../pages/MisPublicaciones/MisPublicaciones";
 import RequireUser from "../components/auth/RequireUser";
 
+import Faq from "../pages/Faq/Faq";
+import RegistrarMunicipio from "../pages/RegistrarMunicipio/RegistrarMunicipio";
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -51,6 +54,8 @@ export default function App() {
         <Route path="/privacidad" element={<Privacidad />} />
         <Route path="/terminos" element={<Terminos />} />
         <Route path="/cookies" element={<Cookies />} />
+        <Route path="/faq" element={<Faq />} />
+        <Route path="/registrar-municipio" element={<RegistrarMunicipio />} />
 
         <Route path="/pueblos" element={<Pueblos />} />
         <Route path="/pueblo/:slug" element={<PuebloDetalle />} />

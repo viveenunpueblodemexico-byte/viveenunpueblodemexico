@@ -328,3 +328,80 @@
   position: relative;
   z-index: 2;
 }
+
+.home__testimonios {
+  margin-top: 28px;
+}
+
+.home__testimoniosGrid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.home__testimonioCard {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.home__testimonioText {
+  margin: 0;
+  opacity: 0.92;
+  line-height: 1.45;
+}
+
+.home__testimonioAutor {
+  margin: 10px 0 0;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.home__newsletter {
+  margin-top: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.home__newsletterText {
+  margin: 8px 0 12px;
+  opacity: 0.85;
+}
+
+.home__newsletterForm {
+  display: grid;
+  gap: 10px;
+  max-width: 420px;
+}
+
+.home__newsletterForm input[type="email"] {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.2);
+  color: inherit;
+}
+
+.home__newsletterConsent {
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.9;
+}
+
+.home__newsletterMsg {
+  margin: 10px 0 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.home__newsletterLinks {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
