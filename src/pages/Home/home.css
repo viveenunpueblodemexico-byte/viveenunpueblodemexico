@@ -327,8 +327,8 @@
 .home__authContent {
   position: relative;
   z-index: 2;
-}
-
+  }
+  
 .home__testimonios {
   margin-top: 28px;
 }
@@ -404,4 +404,63 @@
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+.home__sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.home__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(47, 79, 62, 0.2);
+  background: rgba(184, 190, 174, 0.25);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.home__emptyBox {
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.home__testimoniosGrid {
+  margin-top: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.home__testimonioCard {
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  box-shadow: 0 10px 24px rgba(47, 79, 62, 0.08);
+}
+
+.home__newsletter {
+  margin-top: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  padding: 18px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  display: grid;
+  gap: 12px;
+}
+
+.home__newsletterIntro {
+  max-width: 680px;
+}
+
+.home__newsletterForm {
+  max-width: 520px;
+}
+
+.home__newsletterForm .btnPrimary {
+  width: fit-content;
+  min-width: 180px;
 }

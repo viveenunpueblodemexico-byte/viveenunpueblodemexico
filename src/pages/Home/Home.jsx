@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getPueblosDestacados } from "../../services/pueblos";
+import { getTestimoniosPublicos } from "../../services/testimonios";
 import PuebloCard from "../../components/PuebloCard";
 import { setPageSEO, buildAbsoluteUrl, clearManagedSEO } from "../../utils/seo";
 import Container from "../../components/layout/Container/Container";
@@ -12,21 +13,6 @@ import puebloBannerVideo from "../../assets/Peaceful Mexican Town Website Banner
 
 import "./home.css";
 
-const TESTIMONIOS = [
-  {
-    autor: "Mariana, Oaxaca",
-    texto: "Encontré una renta accesible y pude mudarme en menos de un mes.",
-  },
-  {
-    autor: "Luis, Jalisco",
-    texto: "Publicamos una vacante local y en 48h ya teníamos candidatos.",
-  },
-  {
-    autor: "Ana, Yucatán",
-    texto: "El catálogo nos ayudó a comparar pueblos con más claridad.",
-  },
-];
-
 
 export default function Home() {
   const { user, loginWithGoogle, logout, isAdmin } = useAuth();
@@ -34,6 +20,9 @@ export default function Home() {
   const [pueblos, setPueblos] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+
+  const [testimonios, setTestimonios] = useState([]);
+  const [loadingTestimonios, setLoadingTestimonios] = useState(true);
 
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterConsent, setNewsletterConsent] = useState(false);
@@ -64,7 +53,21 @@ export default function Home() {
       }
     }
 
+        async function loadTestimonios() {
+      setLoadingTestimonios(true);
+      try {
+        const data = await getTestimoniosPublicos({ max: 6 });
+        setTestimonios(data);
+      } catch (err) {
+        console.warn("No se pudieron cargar testimonios:", err?.message || err);
+        setTestimonios([]);
+      } finally {
+        setLoadingTestimonios(false);
+      }
+    }
+
     load();
+    loadTestimonios();
 
     return () => {
       clearManagedSEO();
@@ -72,7 +75,7 @@ export default function Home() {
   }, []);
 
 
-    async function onNewsletterSubmit(e) {
+     async function onNewsletterSubmit(e) {
     e.preventDefault();
     setNewsletterMsg("");
     setNewsletterSending(true);
@@ -141,7 +144,7 @@ export default function Home() {
                 <source src={puebloBannerVideo} type="video/mp4" />
               </video>
 
-              <div className="home__authBgOverlay" />
+                           <div className="home__authBgOverlay" />
 
               <div className="home__authContent">
                 <h2 className="home__authTitle">Bienvenido</h2>
@@ -192,20 +195,39 @@ export default function Home() {
         </section>
 
         <section className="home__testimonios" aria-label="Testimonios">
-          <h2 className="home__sectionTitle">Historias de la comunidad</h2>
-          <div className="home__testimoniosGrid">
-            {TESTIMONIOS.map((t) => (
-              <article key={t.autor} className="home__testimonioCard">
-                <p className="home__testimonioText">“{t.texto}”</p>
-                <p className="home__testimonioAutor">— {t.autor}</p>
-              </article>
-            ))}
+          <div className="home__sectionHead">
+            <h2 className="home__sectionTitle">Historias de la comunidad</h2>
+            <span className="home__badge">Testimonios reales</span>
           </div>
+
+          {loadingTestimonios ? (
+            <p className="home__status">Cargando testimonios…</p>
+          ) : testimonios.length === 0 ? (
+            <div className="home__emptyBox">
+              <p style={{ margin: 0 }}>Aún no hay testimonios verificados.</p>
+              <p style={{ margin: "8px 0 0", opacity: 0.85 }}>
+                ¿Quieres compartir tu experiencia? Escríbenos desde el foro o por contacto para publicarla.
+              </p>
+            </div>
+          ) : (
+            <div className="home__testimoniosGrid">
+              {testimonios.map((t) => (
+                <article key={t.id} className="home__testimonioCard">
+                  <p className="home__testimonioText">“{t.texto}”</p>
+                  <p className="home__testimonioAutor">
+                    — {t.nombre}, {t.ubicacion}
+                  </p>
+                </article>
+              ))}
+            </div>
+          )}
         </section>
 
         <section id="newsletter" className="home__newsletter" aria-label="Newsletter">
-          <h2 className="home__sectionTitle">Recibe novedades</h2>
-          <p className="home__newsletterText">Te enviaremos noticias de pueblos, nuevas oportunidades y lanzamientos.</p>
+          <div className="home__newsletterIntro">
+            <h2 className="home__sectionTitle">Recibe novedades</h2>
+            <p className="home__newsletterText">Te enviaremos noticias de pueblos, nuevas oportunidades y lanzamientos.</p>
+          </div>
 
           <form className="home__newsletterForm" onSubmit={onNewsletterSubmit}>
             <input
@@ -228,18 +250,18 @@ export default function Home() {
             <button type="submit" className="btnPrimary" disabled={newsletterSending}>
               {newsletterSending ? "Enviando..." : "Suscribirme"}
             </button>
-          </form>
 
-          {newsletterMsg ? <p className="home__newsletterMsg">{newsletterMsg}</p> : null}
+            {newsletterMsg ? <p className="home__newsletterMsg">{newsletterMsg}</p> : null}
+          </form>
 
           <div className="home__newsletterLinks">
             <Link className="btn" to="/faq">
               Ver FAQ
             </Link>
-          <Link className="btn" to="/registrar-municipio">
+            <Link className="btn" to="/registrar-municipio">
               Soy municipio
             </Link>
-                    </div>
+          </div>
         </section>
       </Container>
     </main>
